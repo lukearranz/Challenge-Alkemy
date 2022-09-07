@@ -17,12 +17,12 @@ public class PersonajeServiceImp implements PersonajeService {
     private PersonajeRepository personajeRepository;
 
     @Override
-    public Personaje savePersonaje(Personaje personaje) {return personajeRepository.save(personaje);}
-
-    @Override
     public List<Personaje> fetchPersonajes() {
         return personajeRepository.findAll();
     }
+
+    @Override
+    public Personaje savePersonaje(Personaje personaje) {return personajeRepository.save(personaje);}
 
     @Override
     public Personaje fetchPersonajeById(Long personajeId) throws PersonajeNotFoundException {
@@ -43,18 +43,15 @@ public class PersonajeServiceImp implements PersonajeService {
     public Personaje updatePersonaje(Long personajeId, Personaje personaje) {
 
         Personaje personajeDB = personajeRepository.findById(personajeId).get();
-        if (Objects.nonNull(personaje.getNombre()) && !"".equalsIgnoreCase(personaje.getNombre())) {
+
+        // No necesitamos chequearlos por que no pueden ser nulos.
+        personajeDB.setEdad((personaje.getEdad()));
+        personajeDB.setPeso((personaje.getPeso()));
+
+        if (Objects.nonNull(personaje.getNombre()) && !personaje.getNombre().isEmpty()) {
             personajeDB.setNombre((personaje.getNombre()));
         }
-        /*
-        if (Objects.nonNull(personaje.getEdad()) && !"".equalsIgnoreCase(personaje.getEdad())) {
-            personajeDB.setEdad((personaje.getEdad()));
-        }
-        if (Objects.nonNull(personaje.getPeso()) && !"".equals(personaje.getPeso())) {
-            personajeDB.setPeso((personaje.getPeso()));
-        }
-        */
-         
+
         if (Objects.nonNull(personaje.getImagen()) && !"".equalsIgnoreCase(personaje.getImagen())) {
             personajeDB.setImagen((personaje.getImagen()));
         }
@@ -64,5 +61,27 @@ public class PersonajeServiceImp implements PersonajeService {
 
         return personajeRepository.save(personajeDB);
     }
+
+    @Override
+    public List<Personaje> fetchPersonajeByNombre(String nombre) {
+        return personajeRepository.findByNombre(nombre);
+    }
+
+    @Override
+    public List<Personaje> fetchPersonajeByEdad(int edad) {
+        return personajeRepository.findByEdad(edad);
+    }
+
+    //ToDo
+    @Override
+    public Object fetchPersonajeByPelicula(Long pelicula) {
+        return null;
+    }
+
+    @Override
+    public List<Personaje> fetchPersonajeByPeso(Double peso) {
+        return personajeRepository.findByPeso(peso);
+    }
+
 
 }

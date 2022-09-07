@@ -16,11 +16,11 @@ import java.util.List;
 public class Personaje {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long personajeId;
+    private long personajeId;
     private String imagen;
     private String nombre;
-    private Integer edad;
-    private Double peso;
+    private int edad;
+    private double peso;
     private String historia;
 
     @ManyToMany

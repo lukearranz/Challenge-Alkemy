@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Builder
 public class Genero {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long generoId;
     private String nombre;
     private String imagen;

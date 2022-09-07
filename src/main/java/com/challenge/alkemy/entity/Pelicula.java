@@ -22,7 +22,7 @@ public class Pelicula {
     private String imagen;
     private String titulo;
 
-    @JsonFormat(pattern="dd/MM/yyyy")
+    @JsonFormat(pattern="dd-MM-yyyy")
     private Date fechaEstreno;
 
     private int calificacion;
