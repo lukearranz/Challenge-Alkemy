@@ -26,10 +26,6 @@ public class PeliculaServiceImp implements PeliculaService{
 
     @Override
     public Optional<Pelicula> fetchPeliculaById(Long peliculaId) {
-        Optional<Pelicula> pelicula = peliculaRepository.findById(peliculaId);
-        if (pelicula.isEmpty()) {
-
-        }
-        return pelicula;
+        return peliculaRepository.findById(peliculaId);
     }
 }

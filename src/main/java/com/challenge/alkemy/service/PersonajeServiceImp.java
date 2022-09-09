@@ -29,8 +29,6 @@ public class PersonajeServiceImp implements PersonajeService {
         return personajeRepository.findAll();
     }
 
-
-
     @Override
     public Personaje savePersonaje(Personaje personaje) {return personajeRepository.save(personaje);}
 

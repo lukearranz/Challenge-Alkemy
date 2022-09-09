@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 public class PeliculaController {
 
@@ -22,7 +24,12 @@ public class PeliculaController {
     public ResponseEntity<Object> fetchPeliculaById(@PathVariable("id") Long peliculaId) {
         LOGGER.info("INSIDE FETCH_PELICULA_BY_ID_PELICULA -----> PELICULA_CONTROLLER");
         try {
-            return ResponseEntity.ok(peliculaService.fetchPeliculaById(peliculaId));
+            Optional<Pelicula> pelicula = peliculaService.fetchPeliculaById(peliculaId);
+            if (pelicula.isPresent()) {
+                return ResponseEntity.ok(pelicula);
+            }
+            return new ResponseEntity<>("No se encontro pelicula con ese Id", HttpStatus.NOT_FOUND);
+
         } catch (Exception e) {
             return new ResponseEntity<>("No se encontro pelicula con ese Id", HttpStatus.NOT_FOUND);
         }
