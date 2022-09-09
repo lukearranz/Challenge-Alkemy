@@ -1,5 +1,6 @@
 package com.challenge.alkemy.service;
 
+import com.challenge.alkemy.dto.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.error.PersonajeNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,13 @@ public interface PersonajeService {
 
     Personaje updatePersonaje(Long personajeId, Personaje personaje);
 
-    List<Personaje> fetchPersonajeByNombre(String nombre);
+    List<PersonajeResponseDto> fetchPersonajeByNombre(String nombre);
 
-    List<Personaje> fetchPersonajeByEdad(int edad);
+    List<PersonajeResponseDto> fetchPersonajeByEdad(int edad);
 
     Object fetchPersonajeByPelicula(Long pelicula);
 
-    List<Personaje> fetchPersonajeByPeso(Double peso);
+    List<PersonajeResponseDto> fetchPersonajeByPeso(Double peso);
+
+    List<PersonajeResponseDto> fetchCharacters();
 }

@@ -1,11 +1,16 @@
 package com.challenge.alkemy.service;
 
+import com.challenge.alkemy.dto.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.error.PersonajeNotFoundException;
 import com.challenge.alkemy.repository.PersonajeRepository;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,10 +21,15 @@ public class PersonajeServiceImp implements PersonajeService {
     @Autowired
     private PersonajeRepository personajeRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public List<Personaje> fetchPersonajes() {
         return personajeRepository.findAll();
     }
+
+
 
     @Override
     public Personaje savePersonaje(Personaje personaje) {return personajeRepository.save(personaje);}
@@ -62,14 +72,25 @@ public class PersonajeServiceImp implements PersonajeService {
         return personajeRepository.save(personajeDB);
     }
 
+    // Estos metodos devuelven DTO
     @Override
-    public List<Personaje> fetchPersonajeByNombre(String nombre) {
-        return personajeRepository.findByNombre(nombre);
+    public List<PersonajeResponseDto> fetchCharacters() {
+        return convertEntityToDto(personajeRepository.findAll());
     }
 
     @Override
-    public List<Personaje> fetchPersonajeByEdad(int edad) {
-        return personajeRepository.findByEdad(edad);
+    public List<PersonajeResponseDto> fetchPersonajeByNombre(String nombre) {
+        return convertEntityToDto(personajeRepository.findByNombre(nombre));
+    }
+
+    @Override
+    public List<PersonajeResponseDto> fetchPersonajeByEdad(int edad) {
+        return convertEntityToDto(personajeRepository.findByEdad(edad));
+    }
+
+    @Override
+    public List<PersonajeResponseDto> fetchPersonajeByPeso(Double peso) {
+        return convertEntityToDto(personajeRepository.findByPeso(peso));
     }
 
     //ToDo
@@ -78,10 +99,19 @@ public class PersonajeServiceImp implements PersonajeService {
         return null;
     }
 
-    @Override
-    public List<Personaje> fetchPersonajeByPeso(Double peso) {
-        return personajeRepository.findByPeso(peso);
-    }
 
+
+
+    // Este metodo recibe una lista de Personajes y la transforma en una lista de PersonajeResponseDto
+    private List<PersonajeResponseDto> convertEntityToDto(List<Personaje> personajes) {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+        List<PersonajeResponseDto> personajeDTO = new ArrayList<>();
+
+        for (Personaje personaje : personajes) {
+            personajeDTO.add(modelMapper.map(personaje, PersonajeResponseDto.class));
+        }
+
+        return personajeDTO;
+    }
 
 }

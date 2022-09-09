@@ -1,5 +1,6 @@
 package com.challenge.alkemy.controller;
 
+import com.challenge.alkemy.dto.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.error.PersonajeNotFoundException;
 import com.challenge.alkemy.service.PersonajeService;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 public class PersonajeController {
@@ -22,8 +22,8 @@ public class PersonajeController {
     // Logger for debugging the application
     private final Logger LOGGER = LoggerFactory.getLogger(PersonajeController.class);
 
-    @GetMapping("/personajes")
-    public ResponseEntity<Object> fetchPersonajes(
+    @GetMapping("/characters")
+    public ResponseEntity<Object> fetchPersonajesWithParameters(
             @RequestParam(required = false, name = "nombre") String nombre,
             @RequestParam(required = false, name = "edad") Integer edad,
             @RequestParam(required = false, name = "peliculaId") Long peliculaId,
@@ -32,7 +32,7 @@ public class PersonajeController {
         LOGGER.info("INSIDE FETCH_PERSONAJES -----> PERSONAJE_CONTROLLER");
 
         if (nombre != null) {
-            List<Personaje> personajes = personajeService.fetchPersonajeByNombre(nombre);
+            List<PersonajeResponseDto> personajes = personajeService.fetchPersonajeByNombre(nombre);
             if (personajes.isEmpty()) {
                 return new ResponseEntity<>("No se encontraron personajes con el nombre ingresado", HttpStatus.NOT_FOUND);
             }
@@ -40,7 +40,7 @@ public class PersonajeController {
         }
 
         if (edad != null) {
-            List<Personaje> personajes = personajeService.fetchPersonajeByEdad(edad);
+            List<PersonajeResponseDto> personajes = personajeService.fetchPersonajeByEdad(edad);
             if (personajes.isEmpty()) {
                 return new ResponseEntity<>("No se encontraron personajes con esa Edad", HttpStatus.NOT_FOUND);
             }
@@ -48,7 +48,7 @@ public class PersonajeController {
         }
 
         if (peso != null) {
-            List<Personaje> personajes = personajeService.fetchPersonajeByPeso(peso);
+            List<PersonajeResponseDto> personajes = personajeService.fetchPersonajeByPeso(peso);
             if (personajes.isEmpty()) {
                 return new ResponseEntity<>("No se encontraron personajes con ese Peso", HttpStatus.NOT_FOUND);
             }
@@ -63,6 +63,16 @@ public class PersonajeController {
         */
 
 
+        List<PersonajeResponseDto> personajes = personajeService.fetchCharacters();
+        if (personajes.isEmpty()) {
+            return new ResponseEntity<>("No se encontraron personajes", HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(personajes);
+    }
+
+
+    @GetMapping("/personaje")
+    public ResponseEntity<Object> fetchPersonajes() {
         List<Personaje> personajes = personajeService.fetchPersonajes();
         if (personajes.isEmpty()) {
             return new ResponseEntity<>("No se encontraron personajes", HttpStatus.NOT_FOUND);
