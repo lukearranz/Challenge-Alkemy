@@ -8,6 +8,7 @@ import com.challenge.alkemy.repository.PeliculaRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,25 @@ public class PeliculaServiceImp implements PeliculaService{
     private ModelMapper modelMapper;
 
     @Override
+    public List<Pelicula> fetchAllPeliculas() {
+        return peliculaRepository.findAll();
+    }
+
+    @Override
+    public List<PeliculaResponseDto> fetchPeliculaByOrder(String orden) {
+        if (orden.equals("ASC")) {
+            return convertEntityToDto(peliculaRepository.findAllByOrderByTituloAsc());
+        }
+
+        if (orden.equals("DESC")) {
+            return convertEntityToDto(peliculaRepository.findAllByOrderByTituloDesc());
+        }
+
+        return null;
+
+    }
+
+    @Override
     public ResponseEntity<Object> savePelicula(Pelicula pelicula) {
         List<Pelicula> peliculaDB = peliculaRepository.findByTitulo(pelicula.getTitulo());
         if (peliculaDB.isEmpty()) {
@@ -41,19 +61,15 @@ public class PeliculaServiceImp implements PeliculaService{
 
 
     @Override
-    public List<PeliculaResponseDto> fetchPeliculaByTitulo(String titulo) {
-        return convertEntityToDto(peliculaRepository.findByTitulo(titulo));
-    }
-
-    @Override
     public List<PeliculaResponseDto> fetchMovies() {
         return convertEntityToDto(peliculaRepository.findAll());
     }
 
     @Override
-    public List<Pelicula> fetchAllPeliculas() {
-        return peliculaRepository.findAll();
+    public List<PeliculaResponseDto> fetchPeliculaByTitulo(String titulo) {
+        return convertEntityToDto(peliculaRepository.findByTitulo(titulo));
     }
+
 
     // Este metodo recibe una lista de Personajes y la transforma en una lista de PersonajeResponseDto
     private List<PeliculaResponseDto> convertEntityToDto(List<Pelicula> peliculas) {

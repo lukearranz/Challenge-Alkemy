@@ -17,4 +17,6 @@ public interface PeliculaService {
     List<PeliculaResponseDto> fetchMovies();
 
     List<Pelicula> fetchAllPeliculas();
+
+    List<PeliculaResponseDto> fetchPeliculaByOrder(String orden);
 }

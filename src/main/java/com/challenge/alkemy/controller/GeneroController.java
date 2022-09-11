@@ -1,19 +1,16 @@
 package com.challenge.alkemy.controller;
 
 import com.challenge.alkemy.entity.Genero;
-import com.challenge.alkemy.repository.GeneroRepository;
 import com.challenge.alkemy.service.GeneroService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class GeneroController {
@@ -24,6 +21,7 @@ public class GeneroController {
     // Logger for debugging the application
     private final Logger LOGGER = LoggerFactory.getLogger(GeneroController.class);
 
+    @Operation(summary = "Obtener Generos")
     @GetMapping("/genero")
     public ResponseEntity<Object> fetchGenerosList() {
         LOGGER.info("INSIDE FETCH_GENEROS_LIST  ---->  GENERO_CONTROLLER");
@@ -34,11 +32,42 @@ public class GeneroController {
         }
     }
 
+    @Operation(summary = "Obtener un genero por Id")
+    @GetMapping("/genero/{id}")
+    public ResponseEntity<Object> fetchGeneroById(@PathVariable("id") Long generoId) {
+        LOGGER.info("INSIDE FETCH_GENERO_BY_ID -----> GENERO_CONTROLLER");
+        try {
+            Optional<Genero> response = generoService.findGeneroById(generoId);
+            if (response.isEmpty()) {
+                return new ResponseEntity<>("No se encontro genero con ese Id", HttpStatus.NOT_FOUND);
+            }
+            return ResponseEntity.ok(generoService.findGeneroById(generoId));
+        } catch (Exception e) {
+            return new ResponseEntity<>("No se encontro genero con ese Id", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Operation(summary = "Eliminar un genero por id")
+    @DeleteMapping("/genero/{id}")
+    public ResponseEntity<Object> deleteGeneroById(@PathVariable("id") Long generoId) {
+        LOGGER.info("INSIDE DELETE_GENERO_BY_ID -----> GENERO_CONTROLLER");
+        try {
+            generoService.deleteGeneroById(generoId);
+            return ResponseEntity.ok("Genero eliminado con exito");
+        } catch (Exception e) {
+            return new ResponseEntity<>("No se encontro genero con ese Id", HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    @Operation(summary = "Crear un nuevo Genero")
     @PostMapping("/genero")
     public ResponseEntity<Object> createGenero(@RequestBody Genero genero) {
             LOGGER.info("INSIDE CREATE_GENERO  ---->  GENERO_CONTROLLER");
             return generoService.saveGenero(genero);
     }
+
+
 
 
 }

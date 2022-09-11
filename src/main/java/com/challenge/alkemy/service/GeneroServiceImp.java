@@ -29,4 +29,14 @@ public class GeneroServiceImp implements GeneroService{
         }
         return new ResponseEntity<>("El Genero solicitado ya existe", HttpStatus.BAD_REQUEST);
     }
+
+    @Override
+    public Optional<Genero> findGeneroById(Long generoId) {
+        return generoRepository.findById(generoId);
+    }
+
+    @Override
+    public void deleteGeneroById(Long generoId) {
+        generoRepository.deleteById(generoId);
+    }
 }

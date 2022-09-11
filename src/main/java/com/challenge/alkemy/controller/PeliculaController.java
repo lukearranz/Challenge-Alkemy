@@ -3,6 +3,7 @@ package com.challenge.alkemy.controller;
 import com.challenge.alkemy.dto.PeliculaResponseDto;
 import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.service.PeliculaService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class PeliculaController {
     // Logger for debugging the application
     private final Logger LOGGER = LoggerFactory.getLogger(PersonajeController.class);
 
+    @Operation(summary = "Obtener una pelicula por Id")
     @GetMapping("/pelicula/{id}")
     public ResponseEntity<Object> fetchPeliculaById(@PathVariable("id") Long peliculaId) {
         LOGGER.info("INSIDE FETCH_PELICULA_BY_ID_PELICULA -----> PELICULA_CONTROLLER");
@@ -37,6 +39,7 @@ public class PeliculaController {
         }
     }
 
+    @Operation(summary = "Obtener todas las peliculas")
     @GetMapping("/pelicula")
     public ResponseEntity<Object> fetchPeliculas() {
         List<Pelicula> peliculas = peliculaService.fetchAllPeliculas();
@@ -47,12 +50,14 @@ public class PeliculaController {
 
     }
 
+    @Operation(summary = "Crear nueva pelicula")
     @PostMapping("/pelicula")
     public ResponseEntity<Object> savePelicula(@RequestBody Pelicula pelicula) {
         LOGGER.info("INSIDE SAVE_PELICULA -----> PELICULA_CONTROLLER");
         return  peliculaService.savePelicula(pelicula);
     }
 
+    @Operation(summary = "Busqueda de peliculas con parametros y DTO")
     @GetMapping("/movies")
     public ResponseEntity<Object> fetchMoviesWithParameters(
             @RequestParam(required = false, name = "nombre") String nombre,
@@ -68,7 +73,19 @@ public class PeliculaController {
                 return new ResponseEntity<>("No se encontraron peliculas con el nombre ingresado", HttpStatus.NOT_FOUND);
             }
             return ResponseEntity.ok(peliculas);
+        }
 
+        if (orden != null) {
+            List<PeliculaResponseDto> peliculasOrdenadas = peliculaService.fetchPeliculaByOrder(orden);
+            if (peliculasOrdenadas == null || peliculasOrdenadas.isEmpty()) {
+                return new ResponseEntity<>("No se encontraron peliculas, verificar parametros de la query", HttpStatus.NOT_FOUND);
+            }
+            return ResponseEntity.ok(peliculasOrdenadas);
+        }
+
+        if (idGenero != null) {
+            // TO DO
+            return null;
         }
 
         List<PeliculaResponseDto> peliculas = peliculaService.fetchMovies();
@@ -78,7 +95,5 @@ public class PeliculaController {
         return ResponseEntity.ok(peliculas);
 
     }
-
-
 
 }

@@ -2,11 +2,9 @@ package com.challenge.alkemy.service;
 
 import com.challenge.alkemy.dto.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
-import com.challenge.alkemy.error.PersonajeNotFoundException;
 import com.challenge.alkemy.repository.PersonajeRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,13 +31,8 @@ public class PersonajeServiceImp implements PersonajeService {
     public Personaje savePersonaje(Personaje personaje) {return personajeRepository.save(personaje);}
 
     @Override
-    public Personaje fetchPersonajeById(Long personajeId) throws PersonajeNotFoundException {
-
-        Optional<Personaje> personaje = personajeRepository.findById(personajeId);
-        if (personaje.isEmpty()) {
-            throw new PersonajeNotFoundException("No encontramos personaje con ese Id");
-        }
-        return personaje.get();
+    public Optional<Personaje> fetchPersonajeById(Long personajeId) {
+        return personajeRepository.findById(personajeId);
     }
 
     @Override

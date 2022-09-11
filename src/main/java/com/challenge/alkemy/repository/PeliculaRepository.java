@@ -10,4 +10,8 @@ import java.util.Optional;
 public interface PeliculaRepository extends JpaRepository<Pelicula, Long> {
 
     List<Pelicula> findByTitulo(String titulo);
+
+    List<Pelicula> findAllByOrderByTituloAsc();
+
+    List<Pelicula> findAllByOrderByTituloDesc();
 }

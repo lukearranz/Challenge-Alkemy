@@ -2,10 +2,10 @@ package com.challenge.alkemy.service;
 
 import com.challenge.alkemy.dto.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
-import com.challenge.alkemy.error.PersonajeNotFoundException;
-import org.springframework.http.ResponseEntity;
+
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface PersonajeService {
@@ -14,9 +14,9 @@ public interface PersonajeService {
 
     Personaje savePersonaje(Personaje personaje);
 
-    Personaje fetchPersonajeById(Long personajeId) throws PersonajeNotFoundException;
+    Optional<Personaje> fetchPersonajeById(Long personajeId);
 
-    void deletePersonajeById(Long personajeId) throws PersonajeNotFoundException;
+    void deletePersonajeById(Long personajeId);
 
     Personaje updatePersonaje(Long personajeId, Personaje personaje);
 
