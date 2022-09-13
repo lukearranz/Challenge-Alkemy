@@ -3,6 +3,8 @@ package com.challenge.alkemy.controller;
 import com.challenge.alkemy.dto.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.service.PersonajeService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +87,7 @@ public class PersonajeController {
 
     @Operation(summary = "Obtener un personaje por Id")
     @GetMapping("/personaje/{id}")
-    public ResponseEntity<Object> fetchPersonajeById(@PathVariable("id") Long personajeId) {
+    public ResponseEntity<Object> fetchPersonajeById(@ApiParam("Clave primaria tipo Long") @PathVariable("id") Long personajeId) {
         LOGGER.info("INSIDE FETCH_PERSONAJE_BY_ID -----> PERSONAJE_CONTROLLER");
         try {
             Optional<Personaje> personaje = personajeService.fetchPersonajeById(personajeId);
