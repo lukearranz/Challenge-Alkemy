@@ -2,6 +2,7 @@ package com.challenge.alkemy.controller;
 
 import com.challenge.alkemy.dto.PeliculaResponseDto;
 import com.challenge.alkemy.entity.Pelicula;
+import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.service.PeliculaService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class PeliculaController {
     @Operation(summary = "Obtener todas las peliculas")
     @GetMapping("/pelicula")
     public ResponseEntity<Object> fetchPeliculas() {
+        LOGGER.info("INSIDE FETCH_PELICULAS -----> PELICULA_CONTROLLER");
         List<Pelicula> peliculas = peliculaService.fetchAllPeliculas();
         if (peliculas.isEmpty()) {
             return new ResponseEntity<>("No se encontraron personajes", HttpStatus.NOT_FOUND);
@@ -55,6 +57,28 @@ public class PeliculaController {
     public ResponseEntity<Object> savePelicula(@RequestBody Pelicula pelicula) {
         LOGGER.info("INSIDE SAVE_PELICULA -----> PELICULA_CONTROLLER");
         return  peliculaService.savePelicula(pelicula);
+    }
+
+    @Operation(summary = "Eliminar una Pelicula por Id")
+    @DeleteMapping("/pelicula/{id}")
+    public ResponseEntity<Object> deletePeliculaById(@PathVariable("id") Long peliculaId) {
+        LOGGER.info("INSIDE DELETE_PELICULA -----> PELICULA_CONTROLLER");
+        try {
+            peliculaService.deletePeliculaById(peliculaId);
+        } catch (Exception e) {
+            return new ResponseEntity<>("No se encontro ninguna pelicula con ese ID", HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok("Pelicula eliminada con exito");
+    }
+
+    @Operation(summary = "Editar una Pelicula por Id")
+    @PutMapping("/pelicula/{id}")
+    public ResponseEntity<Object> updatePelicula(@PathVariable("id") Long peliculaId, @RequestBody Pelicula pelicula) {
+        try {
+            return ResponseEntity.ok(peliculaService.updatePelicula(peliculaId, pelicula));
+        } catch (Exception e) {
+            return new ResponseEntity<>("No se encontro pelicula a Editar con ese Id", HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(summary = "Busqueda de peliculas con parametros y DTO")

@@ -107,7 +107,7 @@ public class PersonajeController {
         return personajeService.savePersonaje(personaje);
     }
 
-    @Operation(summary = "Eliminar un personaje")
+    @Operation(summary = "Eliminar un personaje por Id")
     @DeleteMapping("/personaje/{id}")
     public ResponseEntity<String> deletePersonajeById(@PathVariable("id") Long personajeId) {
         LOGGER.info("INSIDE DELETE_PERSONAJE -----> PERSONAJE_CONTROLLER");
@@ -116,7 +116,7 @@ public class PersonajeController {
         } catch (Exception e) {
             return new ResponseEntity<>("No se encontro personaje a Eliminar con ese Id", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>("Eliminado con exito", HttpStatus.OK);
+        return new ResponseEntity<>("Personaje eliminado con exito", HttpStatus.OK);
     }
 
     @Operation(summary = "Editar un personaje")

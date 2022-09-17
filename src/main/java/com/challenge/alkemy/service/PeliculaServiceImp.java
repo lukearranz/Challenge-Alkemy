@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -46,6 +47,29 @@ public class PeliculaServiceImp implements PeliculaService{
     }
 
     @Override
+    public void deletePeliculaById(Long peliculaId) {
+        peliculaRepository.deleteById(peliculaId);
+    }
+
+    @Override
+    public Object updatePelicula(Long peliculaId, Pelicula pelicula) {
+
+        Pelicula peliculaDB = peliculaRepository.findById(peliculaId).get();
+
+        if (Objects.nonNull(pelicula.getTitulo()) && !pelicula.getTitulo().isEmpty()) {
+            peliculaDB.setTitulo(pelicula.getTitulo());
+        }
+        if (Objects.nonNull(pelicula.getImagen()) && !"".equalsIgnoreCase(pelicula.getImagen())) {
+            peliculaDB.setImagen((pelicula.getImagen()));
+        }
+        peliculaDB.setCalificacion(pelicula.getCalificacion());
+        peliculaDB.setFechaEstreno(pelicula.getFechaEstreno());
+
+        return peliculaRepository.save(peliculaDB);
+
+    }
+
+    @Override
     public ResponseEntity<Object> savePelicula(Pelicula pelicula) {
         List<Pelicula> peliculaDB = peliculaRepository.findByTitulo(pelicula.getTitulo());
         if (peliculaDB.isEmpty()) {
@@ -59,7 +83,6 @@ public class PeliculaServiceImp implements PeliculaService{
         return peliculaRepository.findById(peliculaId);
     }
 
-
     @Override
     public List<PeliculaResponseDto> fetchMovies() {
         return convertEntityToDto(peliculaRepository.findAll());
@@ -69,7 +92,6 @@ public class PeliculaServiceImp implements PeliculaService{
     public List<PeliculaResponseDto> fetchPeliculaByTitulo(String titulo) {
         return convertEntityToDto(peliculaRepository.findByTitulo(titulo));
     }
-
 
     // Este metodo recibe una lista de Personajes y la transforma en una lista de PersonajeResponseDto
     private List<PeliculaResponseDto> convertEntityToDto(List<Pelicula> peliculas) {

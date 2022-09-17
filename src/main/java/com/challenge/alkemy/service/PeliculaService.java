@@ -19,4 +19,8 @@ public interface PeliculaService {
     List<Pelicula> fetchAllPeliculas();
 
     List<PeliculaResponseDto> fetchPeliculaByOrder(String orden);
+
+    void deletePeliculaById(Long peliculaId);
+
+    Object updatePelicula(Long peliculaId, Pelicula pelicula);
 }

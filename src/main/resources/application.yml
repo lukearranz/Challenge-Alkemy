@@ -26,3 +26,6 @@ management:
       exposure:
         include: "*"
         exclude: "env, beans"
+
+jwt:
+  secret: secretkey123
