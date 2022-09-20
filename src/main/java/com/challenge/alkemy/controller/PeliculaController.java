@@ -4,6 +4,7 @@ import com.challenge.alkemy.dto.PeliculaResponseDto;
 import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.service.PeliculaService;
+import com.challenge.alkemy.service.PersonajeService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +22,9 @@ public class PeliculaController {
 
     @Autowired
     private PeliculaService peliculaService;
+
+    @Autowired
+    private PersonajeService personajeService;
 
     // Logger for debugging the application
     private final Logger LOGGER = LoggerFactory.getLogger(PersonajeController.class);
@@ -46,7 +51,7 @@ public class PeliculaController {
         LOGGER.info("INSIDE FETCH_PELICULAS -----> PELICULA_CONTROLLER");
         List<Pelicula> peliculas = peliculaService.fetchAllPeliculas();
         if (peliculas.isEmpty()) {
-            return new ResponseEntity<>("No se encontraron personajes", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No se encontraron peliculas", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(peliculas);
 
@@ -118,6 +123,24 @@ public class PeliculaController {
         }
         return ResponseEntity.ok(peliculas);
 
+    }
+
+    @Operation(summary = "Agregar personajes a una pelicula")
+    @PostMapping("/movies/{idMovie}/characters/{idCharacter}")
+    Pelicula addCharacterToMovie(
+            @PathVariable Long idMovie,
+            @PathVariable Long idCharacter
+    ) {
+        Personaje personajeDB = personajeService.fetchPersonajeById(idCharacter).get();
+        Pelicula peliculaDB = peliculaService.fetchPeliculaById(idMovie).get();
+
+        List<Personaje> personajes = new ArrayList<>();
+
+        personajes.add(personajeDB);
+
+        peliculaDB.setPersonajes(personajes);
+
+        return (Pelicula) peliculaService.updatePelicula(idMovie ,peliculaDB);
     }
 
 }

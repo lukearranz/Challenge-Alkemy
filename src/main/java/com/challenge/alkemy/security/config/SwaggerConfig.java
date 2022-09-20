@@ -1,15 +1,20 @@
-package com.challenge.alkemy.config;
+package com.challenge.alkemy.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
@@ -24,6 +29,7 @@ public class SwaggerConfig {
                 .build();
     }
 
+
     private ApiInfo apiDetails() {
         return new ApiInfo("ALKEMY SPRINGBOOT CHALLENGE - API REST",
                 "Api Rest docs for the alkemy challenge",
@@ -34,5 +40,6 @@ public class SwaggerConfig {
                 "http://www.lucasarranz.com.ar",
                 Collections.emptyList());
     }
+
 
 }

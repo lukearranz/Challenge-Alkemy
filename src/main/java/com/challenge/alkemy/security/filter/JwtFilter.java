@@ -1,13 +1,11 @@
 package com.challenge.alkemy.security.filter;
 
-import com.challenge.alkemy.security.service.UserService;
+import com.challenge.alkemy.security.service.UserServiceImp;
 import com.challenge.alkemy.security.utility.JWTUtility;
-import org.apache.catalina.filters.ExpiresFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,7 +24,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private JWTUtility jwtUtility;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImp userServiceImp;
 
 
     @Override
@@ -44,7 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
         userName = jwtUtility.getUsernameFromToken(token);
 
         if (null != userName && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(userName);
+            UserDetails userDetails = userServiceImp.loadUserByUsername(userName);
 
             if (jwtUtility.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

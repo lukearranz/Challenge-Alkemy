@@ -1,21 +1,12 @@
 package com.challenge.alkemy.security.service;
 
-import org.springframework.security.core.userdetails.User;
+import com.challenge.alkemy.entity.Usuario;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 
-@Service
-public class UserService implements UserDetailsService {
+public interface UserService {
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    UserDetails loadUserByUsername(String username);
 
-        // Logic to get the user from the database.
-
-        return new User("admin", "password", new ArrayList<>());
-    }
+    String createUser(Usuario usuario);
 }

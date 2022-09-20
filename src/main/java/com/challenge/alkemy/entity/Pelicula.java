@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -27,9 +29,10 @@ public class Pelicula {
 
     private int calificacion;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "peliculas")
     private List<Personaje> personajes;
 
     @ManyToOne
     private Genero genero;
+
 }
