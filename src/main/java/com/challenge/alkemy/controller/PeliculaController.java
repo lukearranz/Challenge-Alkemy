@@ -23,9 +23,6 @@ public class PeliculaController {
     @Autowired
     private PeliculaService peliculaService;
 
-    @Autowired
-    private PersonajeService personajeService;
-
     // Logger for debugging the application
     private final Logger LOGGER = LoggerFactory.getLogger(PersonajeController.class);
 
@@ -33,8 +30,9 @@ public class PeliculaController {
     @GetMapping("/pelicula/{id}")
     public ResponseEntity<Object> fetchPeliculaById(@PathVariable("id") Long peliculaId) {
         LOGGER.info("INSIDE FETCH_PELICULA_BY_ID_PELICULA -----> PELICULA_CONTROLLER");
+
         try {
-            Optional<Pelicula> pelicula = peliculaService.fetchPeliculaById(peliculaId);
+            Optional pelicula = peliculaService.fetchPeliculaById(peliculaId);
             if (pelicula.isPresent()) {
                 return ResponseEntity.ok(pelicula);
             }
@@ -43,17 +41,17 @@ public class PeliculaController {
         } catch (Exception e) {
             return new ResponseEntity<>("No se encontro pelicula con ese Id", HttpStatus.NOT_FOUND);
         }
+
+
     }
 
     @Operation(summary = "Obtener todas las peliculas")
     @GetMapping("/pelicula")
     public ResponseEntity<Object> fetchPeliculas() {
+
         LOGGER.info("INSIDE FETCH_PELICULAS -----> PELICULA_CONTROLLER");
-        List<Pelicula> peliculas = peliculaService.fetchAllPeliculas();
-        if (peliculas.isEmpty()) {
-            return new ResponseEntity<>("No se encontraron peliculas", HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(peliculas);
+        return peliculaService.fetchAllPeliculas();
+
 
     }
 
@@ -125,22 +123,18 @@ public class PeliculaController {
 
     }
 
+    // Working but having some issues
     @Operation(summary = "Agregar personajes a una pelicula")
     @PostMapping("/movies/{idMovie}/characters/{idCharacter}")
-    Pelicula addCharacterToMovie(
+    ResponseEntity<Object> addCharacterToMovie(
             @PathVariable Long idMovie,
             @PathVariable Long idCharacter
     ) {
-        Personaje personajeDB = personajeService.fetchPersonajeById(idCharacter).get();
-        Pelicula peliculaDB = peliculaService.fetchPeliculaById(idMovie).get();
-
-        List<Personaje> personajes = new ArrayList<>();
-
-        personajes.add(personajeDB);
-
-        peliculaDB.setPersonajes(personajes);
-
-        return (Pelicula) peliculaService.updatePelicula(idMovie ,peliculaDB);
+        try {
+            return peliculaService.addCharacterToMovie(idMovie, idCharacter);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 }

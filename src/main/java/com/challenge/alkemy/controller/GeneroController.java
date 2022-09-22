@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,9 +27,10 @@ public class GeneroController {
     public ResponseEntity<Object> fetchGenerosList() {
         LOGGER.info("INSIDE FETCH_GENEROS_LIST  ---->  GENERO_CONTROLLER");
         try {
-            return ResponseEntity.ok(generoService.fetchGenero());
+            ResponseEntity<Object> response = generoService.fetchGenero();
+            return response;
         } catch (Exception e) {
-            return new ResponseEntity<>("No se encontro ningun Género", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -53,9 +55,9 @@ public class GeneroController {
         LOGGER.info("INSIDE DELETE_GENERO_BY_ID -----> GENERO_CONTROLLER");
         try {
             generoService.deleteGeneroById(generoId);
-            return ResponseEntity.ok("Genero eliminado con exito");
+            return ResponseEntity.ok("GENERO ELIMINADO CON EXITO");
         } catch (Exception e) {
-            return new ResponseEntity<>("No se encontro genero con ese Id", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("NO SE ENCONTRO GENERO CON ESE ID", HttpStatus.NOT_FOUND);
         }
     }
 

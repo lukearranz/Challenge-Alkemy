@@ -25,11 +25,18 @@ public class PeliculaServiceImp implements PeliculaService{
     private PeliculaRepository peliculaRepository;
 
     @Autowired
+    private PersonajeService personajeService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Override
-    public List<Pelicula> fetchAllPeliculas() {
-        return peliculaRepository.findAll();
+    public ResponseEntity<Object> fetchAllPeliculas() {
+        List<Pelicula> peliculasDB = peliculaRepository.findAll();
+        if (peliculasDB.isEmpty()) {
+            return new ResponseEntity<>("NO SE ENCONTRARON PELICULAS", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(peliculasDB, HttpStatus.OK);
     }
 
     @Override
@@ -64,23 +71,48 @@ public class PeliculaServiceImp implements PeliculaService{
         }
         peliculaDB.setCalificacion(pelicula.getCalificacion());
         peliculaDB.setFechaEstreno(pelicula.getFechaEstreno());
+        // Testing
+        peliculaDB.setPersonajes(pelicula.getPersonajes());
 
         return peliculaRepository.save(peliculaDB);
 
     }
 
     @Override
+    public ResponseEntity<Object> addCharacterToMovie(Long idMovie, Long idCharacter) {
+
+        Personaje personajeToAdd = personajeService.fetchPersonajeById(idCharacter).get();
+        Pelicula peliculaDB = fetchPeliculaById(idMovie).get();
+
+        List<Personaje> personajesInMovie = peliculaDB.getPersonajes();
+
+        if (personajesInMovie.contains(personajeToAdd)) {
+            return new ResponseEntity<>("EL PERSONAJE QUE INTENTA AGREGAR YA EXISTE EN ESTA PELICULA",HttpStatus.BAD_REQUEST);
+        }
+
+        personajesInMovie.add(personajeToAdd);
+
+        peliculaDB.setPersonajes(personajesInMovie);
+
+        return new ResponseEntity<>(peliculaRepository.save(peliculaDB), HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<Object> savePelicula(Pelicula pelicula) {
+        if (pelicula.getCalificacion() < 1 || pelicula.getCalificacion() > 5) {
+            return new ResponseEntity<>("LA CALIFICACION DEBE ESTAR ENTRE 1 Y 5", HttpStatus.BAD_REQUEST);
+        }
         List<Pelicula> peliculaDB = peliculaRepository.findByTitulo(pelicula.getTitulo());
         if (peliculaDB.isEmpty()) {
             return ResponseEntity.ok(peliculaRepository.save(pelicula));
         }
-        return new ResponseEntity<>("El Titulo solicitado ya existe", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("EL TITULO SOLICITADO YA EXISTE", HttpStatus.BAD_REQUEST);
     }
 
     @Override
     public Optional<Pelicula> fetchPeliculaById(Long peliculaId) {
         return peliculaRepository.findById(peliculaId);
+
     }
 
     @Override

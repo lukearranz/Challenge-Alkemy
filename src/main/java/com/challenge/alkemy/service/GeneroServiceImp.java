@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,8 +17,12 @@ public class GeneroServiceImp implements GeneroService{
     private GeneroRepository generoRepository;
 
     @Override
-    public Object fetchGenero() {
-        return generoRepository.findAll();
+    public ResponseEntity<Object> fetchGenero() {
+        List<Genero> generosDB = generoRepository.findAll();
+        if (generosDB.isEmpty()) {
+            return new ResponseEntity<>("NO SE ENCONTRARON GENEROS",HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(generosDB,HttpStatus.OK);
     }
 
     @Override

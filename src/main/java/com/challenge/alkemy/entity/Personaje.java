@@ -20,24 +20,42 @@ public class Personaje {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long personajeId;
-
+    @Column(name = "imagen")
     private String imagen;
+    @Column(name = "nombre")
     private String nombre;
+    @Column(name = "edad")
     private int edad;
+    @Column(name = "peso")
     private double peso;
+    @Column(name = "historia")
     private String historia;
 
-    @ManyToMany
+    /*
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
     @JoinTable(
-            name = "pelicula_personaje_map",
+            name = "personajes_peliculas",
             joinColumns = @JoinColumn(
-                    name = "personaje_id",
-                    referencedColumnName = "personajeId"
+                    name = "personaje_id"
             ),
             inverseJoinColumns = @JoinColumn(
-                    name = "pelicula_id",
-                    referencedColumnName = "peliculaId"
+                    name = "pelicula_id"
             )
     )
+     */
+
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            mappedBy = "personajes")
+    @JsonIgnore
     private List<Pelicula> peliculas;
 }
