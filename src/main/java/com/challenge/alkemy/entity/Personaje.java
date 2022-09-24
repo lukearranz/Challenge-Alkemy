@@ -1,6 +1,7 @@
 package com.challenge.alkemy.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,14 +21,21 @@ public class Personaje {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long personajeId;
+
     @Column(name = "imagen")
+    @NotNull
     private String imagen;
+
     @Column(name = "nombre")
+    @NotNull
     private String nombre;
+
     @Column(name = "edad")
     private int edad;
+
     @Column(name = "peso")
     private double peso;
+
     @Column(name = "historia")
     private String historia;
 

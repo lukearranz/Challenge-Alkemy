@@ -2,12 +2,14 @@ server:
   port: '8080'
 
 
+# Selected Profile
 spring:
   profiles:
-    active: dev
+    active: testing
 
 ---
 
+# Profile para Desarrollo
 spring:
   profiles: dev
   datasource:
@@ -19,6 +21,23 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: 'true'
+
+---
+
+# Profile para Testing
+spring:
+  profiles: testing
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    url: jdbc:mysql://localhost:3306/alkemy-challenge-testing
+    password: ''
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: 'true'
+
+---
 
 management:
   endpoints:

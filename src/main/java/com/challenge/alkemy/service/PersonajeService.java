@@ -29,4 +29,6 @@ public interface PersonajeService {
     List<PersonajeResponseDto> fetchPersonajeByPeso(Double peso);
 
     List<PersonajeResponseDto> fetchCharacters();
+
+    List<PersonajeResponseDto> fetchPersonajesByPeliculaId(Long idMovie);
 }

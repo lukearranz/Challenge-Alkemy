@@ -123,8 +123,7 @@ public class PeliculaController {
 
     }
 
-    // Working but having some issues
-    @Operation(summary = "Agregar personajes a una pelicula")
+    @Operation(summary = "Agregar personaje a una pelicula por Id")
     @PostMapping("/movies/{idMovie}/characters/{idCharacter}")
     ResponseEntity<Object> addCharacterToMovie(
             @PathVariable Long idMovie,
@@ -132,6 +131,19 @@ public class PeliculaController {
     ) {
         try {
             return peliculaService.addCharacterToMovie(idMovie, idCharacter);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Operation(summary = "Eliminar personaje de una pelicula por Id")
+    @DeleteMapping("/movies/{idMovie}/characters/{idCharacter}")
+    ResponseEntity<Object> deleteCharacterOfMovie(
+            @PathVariable Long idMovie,
+            @PathVariable Long idCharacter
+    ) {
+        try {
+            return peliculaService.deleteCharacterFromMovie(idMovie, idCharacter);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

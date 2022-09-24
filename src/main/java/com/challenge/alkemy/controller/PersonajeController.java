@@ -30,7 +30,7 @@ public class PersonajeController {
     public ResponseEntity<Object> fetchPersonajesWithParameters(
             @RequestParam(required = false, name = "nombre") String nombre,
             @RequestParam(required = false, name = "edad") Integer edad,
-            @RequestParam(required = false, name = "peliculaId") Long peliculaId,
+            @RequestParam(required = false, name = "idMovie") Long idMovie,
             @RequestParam(required = false, name = "peso") Double peso
             ) {
         LOGGER.info("INSIDE FETCH_PERSONAJES -----> PERSONAJE_CONTROLLER");
@@ -59,12 +59,18 @@ public class PersonajeController {
             return ResponseEntity.ok(personajes);
         }
 
-        /*
+
         //ToDo id_pelicula
-        if (peliculaId != null) {
-            return ResponseEntity.ok(personajeService.fetchPersonajeByPelicula(peliculaId));
+        if (idMovie != null) {
+            LOGGER.info("INSIDE FETCH_PERSONAJES_BY_ID_MOVIE (" + idMovie + ") -----> PERSONAJE_CONTROLLER");
+
+            List<PersonajeResponseDto> personajes = personajeService.fetchPersonajesByPeliculaId(idMovie);
+            if (personajes.isEmpty()) {
+                return new ResponseEntity<>("No se encontraron personajes con ese Peso", HttpStatus.NOT_FOUND);
+            }
+            return ResponseEntity.ok(personajes);
         }
-        */
+
 
 
         List<PersonajeResponseDto> personajes = personajeService.fetchCharacters();

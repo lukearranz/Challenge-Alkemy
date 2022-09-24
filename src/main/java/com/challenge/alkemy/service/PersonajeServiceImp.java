@@ -70,8 +70,16 @@ public class PersonajeServiceImp implements PersonajeService {
     }
 
     @Override
+    public List<PersonajeResponseDto> fetchPersonajesByPeliculaId(Long idMovie) {
+
+        // To Do
+
+        return null;
+    }
+
+    @Override
     public List<PersonajeResponseDto> fetchPersonajeByNombre(String nombre) {
-        return convertEntityToDto(personajeRepository.findByNombre(nombre));
+        return convertEntityToDto((List<Personaje>) personajeRepository.findByNombre(nombre));
     }
 
     @Override
@@ -87,6 +95,7 @@ public class PersonajeServiceImp implements PersonajeService {
     //ToDo
     @Override
     public Object fetchPersonajeByPelicula(Long pelicula) {
+
         return null;
     }
 

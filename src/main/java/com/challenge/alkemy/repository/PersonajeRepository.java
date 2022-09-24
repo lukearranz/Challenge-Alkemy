@@ -7,9 +7,10 @@ import java.util.List;
 
 public interface PersonajeRepository extends JpaRepository<Personaje, Long> {
 
-    List<Personaje> findByNombre(String nombre);
+    Personaje findByNombre(String nombre);
 
     List<Personaje> findByEdad(int edad);
 
     List<Personaje> findByPeso(Double peso);
+
 }

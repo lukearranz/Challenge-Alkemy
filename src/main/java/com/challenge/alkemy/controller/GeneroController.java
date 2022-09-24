@@ -41,14 +41,15 @@ public class GeneroController {
         try {
             Optional<Genero> response = generoService.findGeneroById(generoId);
             if (response.isEmpty()) {
-                return new ResponseEntity<>("No se encontro genero con ese Id", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("NO SE ENCONTRO GENERO CON ESE ID", HttpStatus.NOT_FOUND);
             }
             return ResponseEntity.ok(generoService.findGeneroById(generoId));
         } catch (Exception e) {
-            return new ResponseEntity<>("No se encontro genero con ese Id", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("NO SE ENCONTRO GENERO CON ESE ID", HttpStatus.NOT_FOUND);
         }
     }
 
+    // No esta funcionando bien, falla Hibernate al querer eliminar el Genero seleccionado.
     @Operation(summary = "Eliminar un genero por id")
     @DeleteMapping("/genero/{id}")
     public ResponseEntity<Object> deleteGeneroById(@PathVariable("id") Long generoId) {
@@ -57,7 +58,7 @@ public class GeneroController {
             generoService.deleteGeneroById(generoId);
             return ResponseEntity.ok("GENERO ELIMINADO CON EXITO");
         } catch (Exception e) {
-            return new ResponseEntity<>("NO SE ENCONTRO GENERO CON ESE ID", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("ALGO SALIO MAL", HttpStatus.NOT_FOUND);
         }
     }
 

@@ -26,4 +26,6 @@ public interface PeliculaService {
     Object updatePelicula(Long peliculaId, Pelicula pelicula);
 
     ResponseEntity<Object> addCharacterToMovie(Long idMovie, Long idCharacter);
+
+    ResponseEntity<Object> deleteCharacterFromMovie(Long idMovie, Long idCharacter);
 }

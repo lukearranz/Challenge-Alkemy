@@ -56,19 +56,11 @@ public class Pelicula {
                     name = "personaje_id"
             )
     )
-    /*
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
-            mappedBy = "peliculas")
-    //@JsonIgnore
-
-     */
     private List<Personaje> personajes;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name ="genero_id")
     private Genero genero;
 
 }

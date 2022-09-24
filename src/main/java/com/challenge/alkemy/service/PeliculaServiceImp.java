@@ -73,6 +73,7 @@ public class PeliculaServiceImp implements PeliculaService{
         peliculaDB.setFechaEstreno(pelicula.getFechaEstreno());
         // Testing
         peliculaDB.setPersonajes(pelicula.getPersonajes());
+        peliculaDB.setGenero(pelicula.getGenero());
 
         return peliculaRepository.save(peliculaDB);
 
@@ -95,6 +96,23 @@ public class PeliculaServiceImp implements PeliculaService{
         peliculaDB.setPersonajes(personajesInMovie);
 
         return new ResponseEntity<>(peliculaRepository.save(peliculaDB), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> deleteCharacterFromMovie(Long idMovie, Long idCharacter) {
+
+        Personaje personajeToDelete = personajeService.fetchPersonajeById(idCharacter).get();
+        Pelicula peliculaDB = fetchPeliculaById(idMovie).get();
+
+        List<Personaje> personajesInMovie = peliculaDB.getPersonajes();
+
+        if (personajesInMovie.contains(personajeToDelete)) {
+            personajesInMovie.remove(personajeToDelete);
+            peliculaDB.setPersonajes(personajesInMovie);
+            peliculaRepository.save(peliculaDB);
+            return new ResponseEntity<>("PERSONAJE ELIMINADO CON EXITO", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("EL PERSONAJE QUE DESEA ELIMINAR NO SE ENCUENTRA EN ESTA PELICULA" , HttpStatus.NOT_FOUND);
     }
 
     @Override

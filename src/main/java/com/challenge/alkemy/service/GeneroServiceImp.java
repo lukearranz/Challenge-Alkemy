@@ -31,7 +31,7 @@ public class GeneroServiceImp implements GeneroService{
         if (generoDB.isEmpty()) {
             return ResponseEntity.ok(generoRepository.save(genero));
         }
-        return new ResponseEntity<>("El Genero solicitado ya existe", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("EL GENERO SOLICITADO YA EXISTE", HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -41,6 +41,9 @@ public class GeneroServiceImp implements GeneroService{
 
     @Override
     public void deleteGeneroById(Long generoId) {
-        generoRepository.deleteById(generoId);
+        Optional<Genero> generoBD = generoRepository.findById(generoId);
+        if (!generoBD.isEmpty()) {
+            generoRepository.deleteById(generoId);
+        }
     }
 }
