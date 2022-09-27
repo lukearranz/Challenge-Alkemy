@@ -1,10 +1,10 @@
 package com.challenge.alkemy.controller;
 
+import com.challenge.alkemy.dto.request.CreatePeliculaRequestDto;
 import com.challenge.alkemy.dto.PeliculaResponseDto;
 import com.challenge.alkemy.entity.Pelicula;
-import com.challenge.alkemy.entity.Personaje;
+import com.challenge.alkemy.error.ChallengeAlkemyException;
 import com.challenge.alkemy.service.PeliculaService;
-import com.challenge.alkemy.service.PersonajeService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,9 +56,9 @@ public class PeliculaController {
 
     @Operation(summary = "Crear nueva pelicula")
     @PostMapping("/pelicula")
-    public ResponseEntity<Object> savePelicula(@RequestBody Pelicula pelicula) {
+    public ResponseEntity<Object> createPelicula(@RequestBody CreatePeliculaRequestDto request) throws ChallengeAlkemyException {
         LOGGER.info("INSIDE SAVE_PELICULA -----> PELICULA_CONTROLLER");
-        return  peliculaService.savePelicula(pelicula);
+        return  peliculaService.createPelicula(request);
     }
 
     @Operation(summary = "Eliminar una Pelicula por Id")
@@ -116,6 +115,7 @@ public class PeliculaController {
         }
 
         List<PeliculaResponseDto> peliculas = peliculaService.fetchMovies();
+        peliculas.forEach(movie -> { movie.setImagen(null);});
         if (peliculas.isEmpty()) {
             return new ResponseEntity<>("No se encontraron peliculas", HttpStatus.NOT_FOUND);
         }

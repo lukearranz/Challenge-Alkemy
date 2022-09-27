@@ -1,15 +1,16 @@
 package com.challenge.alkemy.service;
 
+import com.challenge.alkemy.dto.request.CreatePeliculaRequestDto;
 import com.challenge.alkemy.dto.PeliculaResponseDto;
 import com.challenge.alkemy.entity.Pelicula;
-import io.swagger.models.Response;
+import com.challenge.alkemy.error.ChallengeAlkemyException;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PeliculaService {
-    ResponseEntity<Object> savePelicula(Pelicula pelicula);
+    ResponseEntity<Object> createPelicula(CreatePeliculaRequestDto pelicula) throws ChallengeAlkemyException;
 
     Optional<Pelicula> fetchPeliculaById(Long peliculaId);
 

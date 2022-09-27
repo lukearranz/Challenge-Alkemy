@@ -30,7 +30,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    url: jdbc:mysql://localhost:3306/alkemy-challenge-testing
+    url: jdbc:mysql://localhost:3306/alkemy_challenge_testing
     password: ''
   jpa:
     hibernate:

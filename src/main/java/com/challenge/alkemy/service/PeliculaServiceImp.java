@@ -1,18 +1,22 @@
 package com.challenge.alkemy.service;
 
+import com.challenge.alkemy.dto.request.CreatePeliculaRequestDto;
 import com.challenge.alkemy.dto.PeliculaResponseDto;
-import com.challenge.alkemy.dto.PersonajeResponseDto;
+import com.challenge.alkemy.dto.response.CreatePeliculaResponseDto;
+import com.challenge.alkemy.entity.Genero;
 import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.entity.Personaje;
+import com.challenge.alkemy.error.ChallengeAlkemyException;
+import com.challenge.alkemy.repository.GeneroRepository;
 import com.challenge.alkemy.repository.PeliculaRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +33,9 @@ public class PeliculaServiceImp implements PeliculaService{
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private GeneroRepository generoRepository;
 
     @Override
     public ResponseEntity<Object> fetchAllPeliculas() {
@@ -116,15 +123,51 @@ public class PeliculaServiceImp implements PeliculaService{
     }
 
     @Override
-    public ResponseEntity<Object> savePelicula(Pelicula pelicula) {
-        if (pelicula.getCalificacion() < 1 || pelicula.getCalificacion() > 5) {
-            return new ResponseEntity<>("LA CALIFICACION DEBE ESTAR ENTRE 1 Y 5", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> createPelicula( @Valid CreatePeliculaRequestDto peliculaRequest) throws ChallengeAlkemyException {
+        // Aca fijate que en CreatePeliculaRequestDto ya le puse la limitacion y el mensaje de error para no tener que chequear en el service de todos modos no esta mal hacer 2 checks.
+       // LINK ->  https://www.baeldung.com/spring-boot-bean-validation
+        if (peliculaRequest.getCalificacion() < 1 || peliculaRequest.getCalificacion() > 5) {
+            return ResponseEntity.badRequest().body( "LA CALIFICACION DEBE ESTAR ENTRE 1 Y 5");
         }
-        List<Pelicula> peliculaDB = peliculaRepository.findByTitulo(pelicula.getTitulo());
-        if (peliculaDB.isEmpty()) {
-            return ResponseEntity.ok(peliculaRepository.save(pelicula));
+        // aca podes dejarlo mejor
+        // asi estaba List<Pelicula> peliculaDB = peliculaRepository.findByTitulo(pelicula.getTitulo());
+        if (peliculaRepository.findByTitulo(peliculaRequest.getTitulo()).isEmpty() ) {
+            return ResponseEntity.badRequest().body(String.format( "La pelicula con titulo %s ya existe.", peliculaRequest.getTitulo()));
         }
-        return new ResponseEntity<>("EL TITULO SOLICITADO YA EXISTE", HttpStatus.BAD_REQUEST);
+        // Los errores siempre es mejor devolverlos cuando suceden no esperar al final
+        // linea uno
+        // linea 2 donde esta el error
+        // linea 3
+        // return devuelve error - es preferible cortar la ejecucion en este caso en linea 2. porque debuggeando es mas facil de ver donde esta el error.
+        //return new ResponseEntity<>("EL TITULO SOLICITADO YA EXISTE", HttpStatus.BAD_REQUEST);
+
+        // hay que ver como se maneja esa exception aca podes ver varias formas https://www.baeldung.com/exception-handling-for-rest-with-spring a mi me gusta @ControllerAdvice
+        Genero genero = generoRepository.findById(peliculaRequest.getGeneroId()).orElseThrow( () -> new ChallengeAlkemyException("Genero no encontrado") );
+
+        Pelicula pelicula = Pelicula.builder()
+                .calificacion(peliculaRequest.getCalificacion())
+                .fechaEstreno(peliculaRequest.getFechaEstreno())
+                .genero(genero)
+                .imagen(peliculaRequest.getImagen())
+                .titulo(peliculaRequest.getTitulo())
+                .build();
+
+        Pelicula peliculaGuardada = peliculaRepository.save(pelicula);
+
+        return ResponseEntity.ok(peliculaToCreatePeliculaDtoResponseMapper(peliculaGuardada));
+    }
+    // Esto lo podes sacar a una clase aparte que se llame mapper o util
+    // uno muy uesado es https://www.baeldung.com/mapstruct
+
+    // una cosa que es impoprtante fijate que en genero develve un string aca podrias devolver el id o el genero entero si es necesario en ese caso tendrias que devolver GeneroDto y que ese dto tenga el id y el nombre o lo que sea
+    private CreatePeliculaResponseDto peliculaToCreatePeliculaDtoResponseMapper(Pelicula pelicula){
+        return CreatePeliculaResponseDto.builder()
+                .calificacion(pelicula.getCalificacion())
+                .fechaEstreno(pelicula.getFechaEstreno())
+                .genero(pelicula.getGenero().getNombre())
+                .id(pelicula.getPeliculaId())
+                .titulo(pelicula.getTitulo())
+                .build();
     }
 
     @Override
