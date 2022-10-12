@@ -22,7 +22,7 @@ public class GeneroController {
     // Logger for debugging the application
     private final Logger LOGGER = LoggerFactory.getLogger(GeneroController.class);
 
-    @Operation(summary = "Obtener Generos")
+    @Operation(summary = "Obtener todos los Generos")
     @GetMapping("/genero")
     public ResponseEntity<Object> fetchGenerosList() {
         LOGGER.info("INSIDE FETCH_GENEROS_LIST  ---->  GENERO_CONTROLLER");
