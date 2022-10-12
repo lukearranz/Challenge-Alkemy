@@ -1,6 +1,6 @@
 package com.challenge.alkemy.service;
 
-import com.challenge.alkemy.dto.PersonajeResponseDto;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.repository.PersonajeRepository;
 import org.modelmapper.ModelMapper;
@@ -36,8 +36,14 @@ public class PersonajeServiceImp implements PersonajeService {
     }
 
     @Override
-    public void deletePersonajeById(Long personajeId) {
-                personajeRepository.deleteById(personajeId);
+    public void deletePersonajeById(Long personajeId) throws Exception {
+
+
+        Personaje personajeDB = personajeRepository.findById(personajeId).orElseThrow(() -> new Exception("Personaje a eliminar por ID no encontrado"));
+
+        personajeDB.getPeliculas().forEach(pelicula -> pelicula.getPersonajes().remove(personajeDB));
+
+        personajeRepository.delete(personajeDB);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.challenge.alkemy.service;
 
 import com.challenge.alkemy.entity.Genero;
+import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.repository.GeneroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,11 @@ public class GeneroServiceImp implements GeneroService{
 
     @Override
     public Optional<Genero> findGeneroById(Long generoId) {
-        return generoRepository.findById(generoId);
+
+        Optional<Genero> generoDB = generoRepository.findById(generoId);
+        //List<Pelicula> peliculasDB = generoDB.orElseThrow().getPeliculas();
+
+        return generoDB;
     }
 
     @Override

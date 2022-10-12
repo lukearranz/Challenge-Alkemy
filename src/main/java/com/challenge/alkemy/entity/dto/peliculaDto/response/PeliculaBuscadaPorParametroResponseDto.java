@@ -1,21 +1,23 @@
-package com.challenge.alkemy.dto;
+package com.challenge.alkemy.entity.dto.peliculaDto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
-public class PeliculaResponseDto {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class PeliculaBuscadaPorParametroResponseDto {
 
-    @NotBlank
     private String imagen;
-    @NotBlank
     private String titulo;
-    @NotNull
     @JsonFormat(pattern="dd-MM-yyyy")
     private Date fechaEstreno;
 

@@ -1,6 +1,6 @@
 package com.challenge.alkemy.service;
 
-import com.challenge.alkemy.dto.PersonajeResponseDto;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
 
 
@@ -16,7 +16,7 @@ public interface PersonajeService {
 
     Optional<Personaje> fetchPersonajeById(Long personajeId);
 
-    void deletePersonajeById(Long personajeId);
+    void deletePersonajeById(Long personajeId) throws Exception;
 
     Personaje updatePersonaje(Long personajeId, Personaje personaje);
 

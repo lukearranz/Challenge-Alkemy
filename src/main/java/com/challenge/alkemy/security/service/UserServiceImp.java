@@ -29,9 +29,12 @@ public class UserServiceImp implements UserDetailsService, UserService {
 
         // Logic to get the user from the database.
         Usuario userDB = usuarioRepository.findUsuarioByUsername(username);
+
         if (userDB == null) {
             throw new UsernameNotFoundException("USUARIO NO ENCONTRADO");
         }
+
+
         return new User(userDB.getUsername(), userDB.getPassword(), new ArrayList<>());
     }
 
