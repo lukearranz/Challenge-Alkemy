@@ -1,31 +1,38 @@
 package com.challenge.alkemy.service;
 
-import com.challenge.alkemy.dto.PeliculaResponseDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.request.CreatePeliculaRequestDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.response.CreatePeliculaResponseDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
 import com.challenge.alkemy.entity.Pelicula;
-import io.swagger.models.Response;
+import com.challenge.alkemy.error.genero.GeneroNotFoundException;
+import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
+import com.challenge.alkemy.error.pelicula.PeliculaNotFound;
+import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PeliculaService {
-    ResponseEntity<Object> savePelicula(Pelicula pelicula);
+    CreatePeliculaResponseDto createPelicula(CreatePeliculaRequestDto pelicula) throws PersonajeNotFoundException, PeliculaAlreadyExistsException, GeneroNotFoundException;
 
     Optional<Pelicula> fetchPeliculaById(Long peliculaId);
 
-    List<PeliculaResponseDto> fetchPeliculaByTitulo(String titulo);
+    PeliculaBuscadaPorParametroResponseDto fetchPeliculaByTitulo(String titulo) throws PeliculaNotFound;
 
-    List<PeliculaResponseDto> fetchMovies();
+    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros();
 
     ResponseEntity<Object> fetchAllPeliculas();
 
-    List<PeliculaResponseDto> fetchPeliculaByOrder(String orden);
+    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden);
 
-    void deletePeliculaById(Long peliculaId);
+    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByGeneroId(Long generoId);
+
+    void deletePeliculaById(Long peliculaId) throws Exception;
 
     Object updatePelicula(Long peliculaId, Pelicula pelicula);
 
-    ResponseEntity<Object> addCharacterToMovie(Long idMovie, Long idCharacter);
+    ResponseEntity<Object> agregarPersonajeToPelicula(Long idMovie, Long idCharacter);
 
-    ResponseEntity<Object> deleteCharacterFromMovie(Long idMovie, Long idCharacter);
+    ResponseEntity<Object> eliminarPersonajeDePelicula(Long idMovie, Long idCharacter);
 }

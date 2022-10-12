@@ -1,9 +1,8 @@
 package com.challenge.alkemy.controller;
 
-import com.challenge.alkemy.dto.PersonajeResponseDto;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.service.PersonajeService;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
@@ -120,7 +119,7 @@ public class PersonajeController {
         try {
             personajeService.deletePersonajeById(personajeId);
         } catch (Exception e) {
-            return new ResponseEntity<>("No se encontro personaje a Eliminar con ese Id", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No se pudo eliminar el personaje", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Personaje eliminado con exito", HttpStatus.OK);
     }

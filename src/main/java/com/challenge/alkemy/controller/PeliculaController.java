@@ -1,10 +1,16 @@
 package com.challenge.alkemy.controller;
 
-import com.challenge.alkemy.dto.PeliculaResponseDto;
+import com.challenge.alkemy.entity.Genero;
+import com.challenge.alkemy.entity.dto.peliculaDto.request.CreatePeliculaRequestDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
 import com.challenge.alkemy.entity.Pelicula;
-import com.challenge.alkemy.entity.Personaje;
+import com.challenge.alkemy.error.ChallengeAlkemyException;
+import com.challenge.alkemy.error.genero.GeneroNotFoundException;
+import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
+import com.challenge.alkemy.error.pelicula.PeliculaNotFound;
+import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
+import com.challenge.alkemy.service.GeneroService;
 import com.challenge.alkemy.service.PeliculaService;
-import com.challenge.alkemy.service.PersonajeService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +28,9 @@ public class PeliculaController {
 
     @Autowired
     private PeliculaService peliculaService;
+
+    @Autowired
+    private GeneroService generoService;
 
     // Logger for debugging the application
     private final Logger LOGGER = LoggerFactory.getLogger(PersonajeController.class);
@@ -57,9 +66,9 @@ public class PeliculaController {
 
     @Operation(summary = "Crear nueva pelicula")
     @PostMapping("/pelicula")
-    public ResponseEntity<Object> savePelicula(@RequestBody Pelicula pelicula) {
+    public ResponseEntity createPelicula(@Valid @RequestBody CreatePeliculaRequestDto request) throws ChallengeAlkemyException, PersonajeNotFoundException, PeliculaAlreadyExistsException, GeneroNotFoundException {
         LOGGER.info("INSIDE SAVE_PELICULA -----> PELICULA_CONTROLLER");
-        return  peliculaService.savePelicula(pelicula);
+        return  ResponseEntity.ok(peliculaService.createPelicula(request));
     }
 
     @Operation(summary = "Eliminar una Pelicula por Id")
@@ -84,26 +93,27 @@ public class PeliculaController {
         }
     }
 
-    @Operation(summary = "Busqueda de peliculas con parametros y DTO")
+    @Operation(summary = "Busqueda de peliculas con parametros")
     @GetMapping("/movies")
-    public ResponseEntity<Object> fetchMoviesWithParameters(
+    public ResponseEntity fetchMoviesWithParameters(@Valid
             @RequestParam(required = false, name = "nombre") String nombre,
-            @RequestParam(required = false, name = "genero") String idGenero,
+            @RequestParam(required = false, name = "genero") Long idGenero,
             @RequestParam(required = false, name = "orden") String orden
-    ) {
+    ) throws PeliculaNotFound {
+
         LOGGER.info("INSIDE FETCH_MOVIES -----> PELICULAS_CONTROLLER");
 
         if (nombre != null) {
-            List<PeliculaResponseDto> peliculas = peliculaService.fetchPeliculaByTitulo(nombre);
+            PeliculaBuscadaPorParametroResponseDto pelicula = peliculaService.fetchPeliculaByTitulo(nombre);
 
-            if (peliculas.isEmpty()) {
+            if (pelicula.getTitulo().isEmpty()) {
                 return new ResponseEntity<>("No se encontraron peliculas con el nombre ingresado", HttpStatus.NOT_FOUND);
             }
-            return ResponseEntity.ok(peliculas);
+            return ResponseEntity.ok(pelicula);
         }
 
         if (orden != null) {
-            List<PeliculaResponseDto> peliculasOrdenadas = peliculaService.fetchPeliculaByOrder(orden);
+            List<PeliculaBuscadaPorParametroResponseDto> peliculasOrdenadas = peliculaService.fetchPeliculasByOrder(orden);
             if (peliculasOrdenadas == null || peliculasOrdenadas.isEmpty()) {
                 return new ResponseEntity<>("No se encontraron peliculas, verificar parametros de la query", HttpStatus.NOT_FOUND);
             }
@@ -111,11 +121,16 @@ public class PeliculaController {
         }
 
         if (idGenero != null) {
-            // TO DO
-            return null;
+
+            try {
+                List<PeliculaBuscadaPorParametroResponseDto> peliculasDB = peliculaService.fetchPeliculasByGeneroId(idGenero);
+                return ResponseEntity.ok(peliculasDB);
+            } catch (Exception e) {
+                return new ResponseEntity<>("No se encontro Genero con ese ID", HttpStatus.NOT_FOUND);
+            }
         }
 
-        List<PeliculaResponseDto> peliculas = peliculaService.fetchMovies();
+        List<PeliculaBuscadaPorParametroResponseDto> peliculas = peliculaService.fetchPeliculasSinParametros();
         if (peliculas.isEmpty()) {
             return new ResponseEntity<>("No se encontraron peliculas", HttpStatus.NOT_FOUND);
         }
@@ -130,7 +145,7 @@ public class PeliculaController {
             @PathVariable Long idCharacter
     ) {
         try {
-            return peliculaService.addCharacterToMovie(idMovie, idCharacter);
+            return peliculaService.agregarPersonajeToPelicula(idMovie, idCharacter);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -143,7 +158,7 @@ public class PeliculaController {
             @PathVariable Long idCharacter
     ) {
         try {
-            return peliculaService.deleteCharacterFromMovie(idMovie, idCharacter);
+            return peliculaService.eliminarPersonajeDePelicula(idMovie, idCharacter);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

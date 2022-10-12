@@ -39,31 +39,9 @@ public class Personaje {
     @Column(name = "historia")
     private String historia;
 
-    /*
     @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(
-            name = "personajes_peliculas",
-            joinColumns = @JoinColumn(
-                    name = "personaje_id"
-            ),
-            inverseJoinColumns = @JoinColumn(
-                    name = "pelicula_id"
-            )
+            mappedBy = "personajes"
     )
-     */
-
-
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
-            mappedBy = "personajes")
     @JsonIgnore
     private List<Pelicula> peliculas;
 }

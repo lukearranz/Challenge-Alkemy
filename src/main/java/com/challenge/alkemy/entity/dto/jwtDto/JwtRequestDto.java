@@ -1,4 +1,4 @@
-package com.challenge.alkemy.dto;
+package com.challenge.alkemy.entity.dto.jwtDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class JwtResponseDto {
+public class JwtRequestDto {
 
-    private String jwtToken;
+    private String username;
+    private String password;
 }

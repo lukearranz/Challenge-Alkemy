@@ -1,7 +1,7 @@
 package com.challenge.alkemy.controller;
 
-import com.challenge.alkemy.dto.JwtRequestDto;
-import com.challenge.alkemy.dto.JwtResponseDto;
+import com.challenge.alkemy.entity.dto.jwtDto.JwtRequestDto;
+import com.challenge.alkemy.entity.dto.jwtDto.JwtResponseDto;
 import com.challenge.alkemy.entity.Usuario;
 import com.challenge.alkemy.security.service.PasswordService;
 import com.challenge.alkemy.security.service.UserService;
@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.transaction.Transactional;
 
 @RestController @RequestMapping(path = "/auth")
 public class AuthController {
@@ -42,6 +40,9 @@ public class AuthController {
     public ResponseEntity<Object> authenticate(@RequestBody JwtRequestDto jwtRequestDto) {
         LOGGER.info("INSIDE AUTHCONTROLLER -----> LOGIN_CONTROLLER");
         String hashedPass = userService.loadUserByUsername(jwtRequestDto.getUsername()).getPassword();
+        if (userService.loadUserByUsername(jwtRequestDto.getUsername()) == null) {
+            return new ResponseEntity<>("EL USUARIO NO EXISTE", HttpStatus.BAD_REQUEST);
+        }
         if (!passwordService.verifyPassword(jwtRequestDto.getPassword(), hashedPass)) {
             return new ResponseEntity<>("USUARIO O CONTRASEÑA INCORRECTOS", HttpStatus.BAD_REQUEST);
         }

@@ -32,16 +32,5 @@ public class ChallengeAlkemyApplication {
 		return NoOpPasswordEncoder.getInstance();
 	}
 
-	// Solo para testear el funcionamiento, despues lo quitaremos.
-	/*
-	@EventListener(ApplicationReadyEvent.class)
-	public void triggerMail() {
-		mailService.sendSimpleEmail(
-				"lucas.arranz@hotmail.com",
-				"Hola, este es un mensaje de prueba enviado desde la aceleracion alkemy",
-				"Mail de prueba"
-		);
-	}
-	 */
 
 }

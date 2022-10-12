@@ -12,9 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -40,13 +38,7 @@ public class Pelicula {
     @Column(name = "calificacion")
     private int calificacion;
 
-
-    @ManyToMany(
-            fetch = FetchType.EAGER,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
+    @ManyToMany
     @JoinTable(
             name = "personajes_peliculas",
             joinColumns = @JoinColumn(
@@ -58,9 +50,9 @@ public class Pelicula {
     )
     private List<Personaje> personajes;
 
+    @NotNull
+    @ManyToOne
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name ="genero_id")
     private Genero genero;
-
 }
