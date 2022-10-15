@@ -12,6 +12,8 @@ public interface PeliculaRepository extends JpaRepository<Pelicula, Long> {
 
     Optional<Pelicula> findByTitulo(String titulo);
 
+    Optional<Pelicula> findFirstByTitulo(String titulo);
+
     List<Pelicula> findAllByOrderByTituloAsc();
 
     List<Pelicula> findAllByOrderByTituloDesc();
