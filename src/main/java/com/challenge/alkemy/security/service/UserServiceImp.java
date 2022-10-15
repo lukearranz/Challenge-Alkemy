@@ -26,15 +26,12 @@ public class UserServiceImp implements UserDetailsService, UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         // Logic to get the user from the database.
         Usuario userDB = usuarioRepository.findUsuarioByUsername(username);
 
         if (userDB == null) {
             throw new UsernameNotFoundException("USUARIO NO ENCONTRADO");
         }
-
-
         return new User(userDB.getUsername(), userDB.getPassword(), new ArrayList<>());
     }
 

@@ -1,8 +1,7 @@
 package com.challenge.alkemy.entity.dto.peliculaDto.response;
 
-import com.challenge.alkemy.entity.Genero;
-import com.challenge.alkemy.entity.Personaje;
-import com.challenge.alkemy.entity.dto.generoDto.GeneroResponseDto;
+import com.challenge.alkemy.entity.dto.generoDto.response.CreateGeneroResponseDto;
+import com.challenge.alkemy.entity.dto.generoDto.response.GeneroResponseDto;
 import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeResponseDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
@@ -15,7 +14,8 @@ import java.util.List;
 
 @Data
 @Builder
-public class CreatePeliculaResponseDto {
+public class DetallePeliculaResponseDto {
+
     @NotNull
     private long id;
     @NotBlank
@@ -28,8 +28,9 @@ public class CreatePeliculaResponseDto {
     @NotNull
     private int calificacion;
     @NotBlank
-    private GeneroResponseDto genero;
+    private CreateGeneroResponseDto genero;
 
     private List<PersonajeResponseDto> personajes;
+
 }
 

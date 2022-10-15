@@ -1,11 +1,15 @@
 package com.challenge.alkemy.service;
 
 import com.challenge.alkemy.entity.Genero;
-import com.challenge.alkemy.entity.Pelicula;
+import com.challenge.alkemy.entity.dto.generoDto.GeneroMapper;
+import com.challenge.alkemy.entity.dto.generoDto.request.CreateGeneroRequestDto;
+import com.challenge.alkemy.entity.dto.generoDto.response.CreateGeneroResponseDto;
+import com.challenge.alkemy.entity.dto.generoDto.response.GeneroResponseDto;
+import com.challenge.alkemy.error.genero.GeneroAlreadyInUseException;
+import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.repository.GeneroRepository;
+import com.challenge.alkemy.repository.PeliculaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,38 +21,52 @@ public class GeneroServiceImp implements GeneroService{
     @Autowired
     private GeneroRepository generoRepository;
 
+    @Autowired
+    private GeneroMapper generoMapper;
+
+    @Autowired
+    private PeliculaRepository peliculaRepository;
+
     @Override
-    public ResponseEntity<Object> fetchGenero() {
+    public List<GeneroResponseDto> fetchGeneros() throws GeneroNotFoundException {
         List<Genero> generosDB = generoRepository.findAll();
         if (generosDB.isEmpty()) {
-            return new ResponseEntity<>("NO SE ENCONTRARON GENEROS",HttpStatus.NOT_FOUND);
+            throw new GeneroNotFoundException("NO SE ENCONTRARON GENEROS");
         }
-        return new ResponseEntity<>(generosDB,HttpStatus.OK);
+        return generoMapper.generosToGenerosResponseDto(generosDB);
     }
 
     @Override
-    public ResponseEntity<Object> saveGenero(Genero genero) {
-        Optional<Genero> generoDB = generoRepository.findGeneroByNombre(genero.getNombre());
-        if (generoDB.isEmpty()) {
-            return ResponseEntity.ok(generoRepository.save(genero));
+    public CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto generoRequest) throws GeneroAlreadyInUseException {
+        Optional<Genero> generoDB = generoRepository.findGeneroByNombre(generoRequest.getNombre());
+        if (generoDB.isPresent()) {
+            throw new GeneroAlreadyInUseException("EL GENERO QUE DESEA CREAR YA EXISTE");
         }
-        return new ResponseEntity<>("EL GENERO SOLICITADO YA EXISTE", HttpStatus.BAD_REQUEST);
+
+        Genero generoToSave = Genero.builder()
+                .nombre(generoRequest.getNombre())
+                .imagen(generoRequest.getImagen())
+                .build();
+
+        Genero generoGuardado = generoRepository.save(generoToSave);
+        return generoMapper.generoToCreateGeneroResponseDto(generoGuardado);
     }
 
     @Override
-    public Optional<Genero> findGeneroById(Long generoId) {
-
+    public GeneroResponseDto findGeneroById(Long generoId) throws GeneroNotFoundException {
         Optional<Genero> generoDB = generoRepository.findById(generoId);
-        //List<Pelicula> peliculasDB = generoDB.orElseThrow().getPeliculas();
-
-        return generoDB;
+        if (generoDB.isEmpty()) {
+            throw new GeneroNotFoundException("NO SE ENCONTRO GENERO CON ESE ID");
+        }
+        return generoMapper.generoToGeneroResponseDto(generoDB.get());
     }
 
     @Override
-    public void deleteGeneroById(Long generoId) {
+    public void deleteGeneroById(Long generoId) throws GeneroNotFoundException {
         Optional<Genero> generoBD = generoRepository.findById(generoId);
-        if (!generoBD.isEmpty()) {
-            generoRepository.deleteById(generoId);
+        if (generoBD.isEmpty()) {
+            throw new GeneroNotFoundException("NO SE ENCONTRO GENERO A ELIMINAR CON ESE ID");
         }
+        generoRepository.deleteById(generoId);
     }
 }

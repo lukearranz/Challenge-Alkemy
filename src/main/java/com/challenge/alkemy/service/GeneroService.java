@@ -1,17 +1,20 @@
 package com.challenge.alkemy.service;
 
-import com.challenge.alkemy.entity.Genero;
-import org.springframework.http.ResponseEntity;
+import com.challenge.alkemy.entity.dto.generoDto.request.CreateGeneroRequestDto;
+import com.challenge.alkemy.entity.dto.generoDto.response.CreateGeneroResponseDto;
+import com.challenge.alkemy.entity.dto.generoDto.response.GeneroResponseDto;
+import com.challenge.alkemy.error.genero.GeneroAlreadyInUseException;
+import com.challenge.alkemy.error.genero.GeneroNotFoundException;
+import com.challenge.alkemy.error.pelicula.PeliculaNotFound;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface GeneroService {
-    ResponseEntity<Object> fetchGenero();
+    List<GeneroResponseDto> fetchGeneros() throws GeneroNotFoundException;
 
-    ResponseEntity<Object> saveGenero(Genero genero);
+    CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto genero) throws GeneroAlreadyInUseException, PeliculaNotFound;
 
-    Optional<Genero> findGeneroById(Long generoId);
+    GeneroResponseDto findGeneroById(Long generoId) throws GeneroNotFoundException;
 
-    void deleteGeneroById(Long generoId);
+    void deleteGeneroById(Long generoId) throws GeneroNotFoundException;
 }

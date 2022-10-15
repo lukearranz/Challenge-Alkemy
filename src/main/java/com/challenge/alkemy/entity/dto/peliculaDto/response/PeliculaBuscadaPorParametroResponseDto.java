@@ -16,8 +16,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class PeliculaBuscadaPorParametroResponseDto {
 
-    private String imagen;
     private String titulo;
+    private String imagen;
     @JsonFormat(pattern="dd-MM-yyyy")
     private Date fechaEstreno;
 

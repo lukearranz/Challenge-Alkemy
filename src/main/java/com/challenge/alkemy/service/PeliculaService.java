@@ -1,38 +1,39 @@
 package com.challenge.alkemy.service;
 
 import com.challenge.alkemy.entity.dto.peliculaDto.request.CreatePeliculaRequestDto;
-import com.challenge.alkemy.entity.dto.peliculaDto.response.CreatePeliculaResponseDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.request.UpdatePeliculaRequestDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.response.DetallePeliculaResponseDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
-import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
+import com.challenge.alkemy.error.pelicula.PeliculaBuscadaPorParametroIncorrectoException;
 import com.challenge.alkemy.error.pelicula.PeliculaNotFound;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
-import org.springframework.http.ResponseEntity;
+import com.challenge.alkemy.error.personaje.PersonajeNotFoundInPeliculaException;
+import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PeliculaService {
-    CreatePeliculaResponseDto createPelicula(CreatePeliculaRequestDto pelicula) throws PersonajeNotFoundException, PeliculaAlreadyExistsException, GeneroNotFoundException;
+    DetallePeliculaResponseDto createPelicula(CreatePeliculaRequestDto pelicula) throws PersonajeNotFoundException, PeliculaAlreadyExistsException, GeneroNotFoundException;
 
-    Optional<Pelicula> fetchPeliculaById(Long peliculaId);
+    DetallePeliculaResponseDto fetchPeliculaById(Long peliculaId) throws PeliculaNotFound;
 
     PeliculaBuscadaPorParametroResponseDto fetchPeliculaByTitulo(String titulo) throws PeliculaNotFound;
 
-    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros();
+    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros() throws PeliculaNotFound;
 
-    ResponseEntity<Object> fetchAllPeliculas();
+    List<DetallePeliculaResponseDto> fetchAllPeliculas() throws PeliculaNotFound;
 
-    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden);
+    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden) throws PeliculaNotFound, PeliculaBuscadaPorParametroIncorrectoException;
 
-    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByGeneroId(Long generoId);
+    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByGeneroId(Long generoId) throws GeneroNotFoundException;
 
     void deletePeliculaById(Long peliculaId) throws Exception;
 
-    Object updatePelicula(Long peliculaId, Pelicula pelicula);
+    DetallePeliculaResponseDto updatePelicula(Long peliculaId, UpdatePeliculaRequestDto peliculaRequest) throws PeliculaNotFound, PersonajeNotFoundException, PeliculaAlreadyExistsException;
 
-    ResponseEntity<Object> agregarPersonajeToPelicula(Long idMovie, Long idCharacter);
+    DetallePeliculaResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFound, PersonajeNotFoundException, PersonajeYaEnUsoException;
 
-    ResponseEntity<Object> eliminarPersonajeDePelicula(Long idMovie, Long idCharacter);
+    DetallePeliculaResponseDto eliminarPersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFound, PersonajeNotFoundInPeliculaException;
 }

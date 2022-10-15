@@ -6,8 +6,10 @@ import lombok.Data;
 @Data
 @Builder
 public class PersonajeResponseDto {
-
-    private String imagen;
+    private Long id;
     private String nombre;
-
+    private String imagen;
+    private int edad;
+    private double peso;
+    private String historia;
 }
