@@ -11,7 +11,7 @@ import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
 import com.challenge.alkemy.error.pelicula.PeliculaBuscadaPorParametroIncorrectoException;
-import com.challenge.alkemy.error.pelicula.PeliculaNotFound;
+import com.challenge.alkemy.error.pelicula.PeliculaNotFoundException;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundInPeliculaException;
 import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
@@ -39,10 +39,10 @@ public class PeliculaServiceImp implements PeliculaService{
     private final PeliculaMapper peliculaMapper;
 
     @Override
-    public List<DetallePeliculaResponseDto> fetchAllPeliculas() throws PeliculaNotFound {
+    public List<DetallePeliculaResponseDto> fetchAllPeliculas() throws PeliculaNotFoundException {
         List<Pelicula> peliculasDB = peliculaRepository.findAll();
         if (peliculasDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRARON PELICULAS");
+            throw new PeliculaNotFoundException("NO SE ENCONTRARON PELICULAS");
         }
         List<DetallePeliculaResponseDto> peliculasMapeadas = new ArrayList<>();
         for (Pelicula pelicula: peliculasDB) {
@@ -52,18 +52,18 @@ public class PeliculaServiceImp implements PeliculaService{
     }
 
     @Override
-    public List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden) throws PeliculaNotFound, PeliculaBuscadaPorParametroIncorrectoException {
+    public List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden) throws PeliculaNotFoundException, PeliculaBuscadaPorParametroIncorrectoException {
         if (orden.equals("ASC")) {
             List<Pelicula> peliculasOrdenadas = peliculaRepository.findAllByOrderByTituloAsc();
             if (peliculasOrdenadas.isEmpty()) {
-                throw new PeliculaNotFound("NO SE ENCONTRARON PELICULAS A ORDENAR");
+                throw new PeliculaNotFoundException("NO SE ENCONTRARON PELICULAS A ORDENAR");
             }
             return peliculaMapper.peliculaToPeliculaBuscadaPorParametroResponseDto(peliculasOrdenadas);
         }
         if (orden.equals("DESC")) {
             List<Pelicula> peliculasOrdenadas = peliculaRepository.findAllByOrderByTituloDesc();
             if (peliculasOrdenadas.isEmpty()) {
-                throw new PeliculaNotFound("NO SE ENCONTRARON PELICULAS A ORDENAR");
+                throw new PeliculaNotFoundException("NO SE ENCONTRARON PELICULAS A ORDENAR");
             }
             return peliculaMapper.peliculaToPeliculaBuscadaPorParametroResponseDto(peliculasOrdenadas);
         }
@@ -83,16 +83,16 @@ public class PeliculaServiceImp implements PeliculaService{
 
     @Override
     @Transactional
-    public void deletePeliculaById(Long peliculaId) throws PeliculaNotFound {
+    public void deletePeliculaById(Long peliculaId) throws PeliculaNotFoundException {
         Optional<Pelicula> peliculaDB = peliculaRepository.findById(peliculaId);
         if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("PELICULA NO ENCONTRADA");
+            throw new PeliculaNotFoundException("PELICULA NO ENCONTRADA");
         }
         peliculaRepository.delete(peliculaDB.get());
     }
 
     @Override
-    public DetallePeliculaResponseDto updatePelicula(@Valid Long peliculaId, UpdatePeliculaRequestDto peliculaRequest) throws PeliculaNotFound, PersonajeNotFoundException, PeliculaAlreadyExistsException {
+    public DetallePeliculaResponseDto updatePelicula(@Valid Long peliculaId, UpdatePeliculaRequestDto peliculaRequest) throws PeliculaNotFoundException, PersonajeNotFoundException, PeliculaAlreadyExistsException {
 
         // Aqui chequeamos que el titulo que se desea ingresar, no este en uso.
         if (peliculaRepository.findFirstByTitulo(peliculaRequest.getTitulo()).isPresent()) {
@@ -101,7 +101,7 @@ public class PeliculaServiceImp implements PeliculaService{
 
         Optional<Pelicula> peliculaDB = peliculaRepository.findById(peliculaId);
         if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRO PELICULA CON ESE ID");
+            throw new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID");
         }
 
         List<Optional<Personaje>> lista = peliculaRequest.getPersonajesId().stream().map(personajeRepository::findById).collect(Collectors.toList());
@@ -128,7 +128,7 @@ public class PeliculaServiceImp implements PeliculaService{
     }
 
     @Override
-    public DetallePeliculaResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFound, PersonajeNotFoundException, PersonajeYaEnUsoException {
+    public DetallePeliculaResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFoundException, PersonajeNotFoundException, PersonajeYaEnUsoException {
         // Chequeamos si el personaje a agregar existe.
         Optional<Personaje> personajeToAdd = personajeService.fetchPersonajeById(idCharacter);
         if (personajeToAdd.isEmpty()) {
@@ -137,7 +137,7 @@ public class PeliculaServiceImp implements PeliculaService{
         // Chequeaamos si la pelicila existe.
         Optional<Pelicula> peliculaDB = peliculaRepository.findById(idMovie);
         if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRO PELICULA CON ESE ID");
+            throw new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID");
         }
         // Chequemos si la pelicula no tiene ya al personaje que se quiere agregar.
         List<Personaje> personajesInMovie = peliculaDB.get().getPersonajes();
@@ -158,7 +158,7 @@ public class PeliculaServiceImp implements PeliculaService{
     }
 
     @Override
-    public DetallePeliculaResponseDto eliminarPersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFound, PersonajeNotFoundInPeliculaException {
+    public DetallePeliculaResponseDto eliminarPersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFoundException, PersonajeNotFoundInPeliculaException {
 
         // Chequeamos si el personaje a eliminar existe.
         Optional<Personaje> personajeToDelete = personajeService.fetchPersonajeById(idCharacter);
@@ -168,7 +168,7 @@ public class PeliculaServiceImp implements PeliculaService{
         // Chequeaamos si la pelicila existe.
         Optional<Pelicula> peliculaDB = peliculaRepository.findById(idMovie);
         if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRO PELICULA CON ESE ID");
+            throw new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID");
         }
 
         Pelicula peliculaToEdit = peliculaDB.orElseThrow();
@@ -212,26 +212,26 @@ public class PeliculaServiceImp implements PeliculaService{
     }
 
     @Override
-    public DetallePeliculaResponseDto fetchPeliculaById(Long peliculaId) throws PeliculaNotFound {
+    public DetallePeliculaResponseDto fetchPeliculaById(Long peliculaId) throws PeliculaNotFoundException {
         Optional<Pelicula> peliculaDB = peliculaRepository.findById(peliculaId);
         if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRO NINGUNA PELICULA CON ESE ID");
+            throw new PeliculaNotFoundException("NO SE ENCONTRO NINGUNA PELICULA CON ESE ID");
         }
         return peliculaMapper.peliculaToDetallePeliculaResponseDto(peliculaDB.get());
     }
 
     @Override
-    public List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros() throws PeliculaNotFound {
+    public List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros() throws PeliculaNotFoundException {
         List<Pelicula> peliculas = peliculaRepository.findAll();
         if (peliculas.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRARON PELICULAS");
+            throw new PeliculaNotFoundException("NO SE ENCONTRARON PELICULAS");
         }
         return peliculaMapper.peliculaToPeliculaBuscadaPorParametroResponseDto(peliculas);
     }
 
     @Override
-    public PeliculaBuscadaPorParametroResponseDto fetchPeliculaByTitulo(String titulo) throws PeliculaNotFound {
-        Pelicula pelicula = peliculaRepository.findByTitulo(titulo).orElseThrow(() -> new PeliculaNotFound("NO SE ENCONTRO PELICULA CON ESE TITULO"));
+    public PeliculaBuscadaPorParametroResponseDto fetchPeliculaByTitulo(String titulo) throws PeliculaNotFoundException {
+        Pelicula pelicula = peliculaRepository.findByTitulo(titulo).orElseThrow(() -> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE TITULO"));
         return peliculaMapper.peliculaToPeliculaBuscadaPorTituloDtoResponse(pelicula);
     }
 

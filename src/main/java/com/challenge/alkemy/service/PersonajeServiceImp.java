@@ -1,11 +1,16 @@
 package com.challenge.alkemy.service;
 
+import com.challenge.alkemy.entity.Pelicula;
+import com.challenge.alkemy.entity.dto.personajeDto.PersonajeMapper;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeBuscadoPorParametroResponseDto;
 import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
+import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
+import com.challenge.alkemy.repository.PeliculaRepository;
 import com.challenge.alkemy.repository.PersonajeRepository;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,13 +19,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class PersonajeServiceImp implements PersonajeService {
 
-    @Autowired
     private PersonajeRepository personajeRepository;
-
-    @Autowired
     private ModelMapper modelMapper;
+    private PersonajeMapper personajeMapper;
+    private PeliculaRepository peliculaRepository;
 
     @Override
     public List<Personaje> fetchPersonajes() {
@@ -71,53 +76,48 @@ public class PersonajeServiceImp implements PersonajeService {
 
     // Estos metodos devuelven DTO
     @Override
-    public List<PersonajeResponseDto> fetchCharacters() {
-        return convertEntityToDto(personajeRepository.findAll());
+    public List<PersonajeBuscadoPorParametroResponseDto> fetchCharacters() {
+
+        List<Personaje> personajesDB = personajeRepository.findAll();
+
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesDB);
     }
 
     @Override
-    public List<PersonajeResponseDto> fetchPersonajesByPeliculaId(Long idMovie) {
+    public List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajesByPeliculaId(Long idMovie) {
 
-        // To Do
+        Pelicula peliculaDB = peliculaRepository.findById(idMovie).orElseThrow();
 
-        return null;
+        List<Personaje> personajesEnPelicula = peliculaDB.getPersonajes();
+
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesEnPelicula);
     }
 
     @Override
-    public List<PersonajeResponseDto> fetchPersonajeByNombre(String nombre) {
-        return convertEntityToDto((List<Personaje>) personajeRepository.findByNombre(nombre));
-    }
-
-    @Override
-    public List<PersonajeResponseDto> fetchPersonajeByEdad(int edad) {
-        return convertEntityToDto(personajeRepository.findByEdad(edad));
-    }
-
-    @Override
-    public List<PersonajeResponseDto> fetchPersonajeByPeso(Double peso) {
-        return convertEntityToDto(personajeRepository.findByPeso(peso));
-    }
-
-    //ToDo
-    @Override
-    public Object fetchPersonajeByPelicula(Long pelicula) {
-
-        return null;
-    }
-
-
-
-
-    // Este metodo recibe una lista de Personajes y la transforma en una lista de PersonajeResponseDto
-    private List<PersonajeResponseDto> convertEntityToDto(List<Personaje> personajes) {
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-        List<PersonajeResponseDto> personajeDTO = new ArrayList<>();
-
-        for (Personaje personaje : personajes) {
-            personajeDTO.add(modelMapper.map(personaje, PersonajeResponseDto.class));
+    public PersonajeBuscadoPorParametroResponseDto fetchPersonajeByNombre(String nombre) throws PersonajeNotFoundException {
+        Optional<Personaje> personajeEncontrado = personajeRepository.findByNombre(nombre);
+        if (personajeEncontrado.isEmpty()) {
+            throw new PersonajeNotFoundException("NO SE ENCONTRO PERSONAJE CON EL NOMBRE INDICADO");
         }
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajeEncontrado.get());
+    }
 
-        return personajeDTO;
+    @Override
+    public List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByEdad(int edad) throws PersonajeNotFoundException {
+        Optional<List<Personaje>> personajesDB = personajeRepository.findByEdad(edad);
+        if (personajesDB.get().isEmpty()) {
+            throw new PersonajeNotFoundException("NO SE ENCONTRO NINGUN PERSONAJE CON LA EDAD INDICADA");
+        }
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesDB.get());
+    }
+
+    @Override
+    public List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByPeso(Double peso) throws PersonajeNotFoundException {
+        Optional<List<Personaje>> personajesDB = personajeRepository.findByPeso(peso);
+        if (personajesDB.get().isEmpty()) {
+            throw new PersonajeNotFoundException("NO SE ENCONTRO NINGUN PERSONAJE CON EL PESO INDICADO");
+        }
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesDB.get());
     }
 
 }

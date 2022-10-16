@@ -2,9 +2,11 @@ package com.challenge.alkemy.controller;
 
 import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeResponseDto;
 import com.challenge.alkemy.entity.Personaje;
+import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
 import com.challenge.alkemy.service.PersonajeService;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 public class PersonajeController {
 
-    @Autowired
     private PersonajeService personajeService;
 
     // Logger for debugging the application
@@ -26,7 +29,7 @@ public class PersonajeController {
 
     @Operation(summary = "Busqueda de personajes con parametros")
     @GetMapping("/characters")
-    public ResponseEntity<Object> fetchPersonajesWithParameters(
+    public ResponseEntity fetchPersonajesWithParameters(
             @RequestParam(required = false, name = "nombre") String nombre,
             @RequestParam(required = false, name = "edad") Integer edad,
             @RequestParam(required = false, name = "idMovie") Long idMovie,
@@ -35,50 +38,63 @@ public class PersonajeController {
         LOGGER.info("INSIDE FETCH_PERSONAJES -----> PERSONAJE_CONTROLLER");
 
         if (nombre != null) {
-            List<PersonajeResponseDto> personajes = personajeService.fetchPersonajeByNombre(nombre);
-            if (personajes.isEmpty()) {
-                return new ResponseEntity<>("No se encontraron personajes con el nombre ingresado", HttpStatus.NOT_FOUND);
+            try {
+                return ResponseEntity.ok(personajeService.fetchPersonajeByNombre(nombre));
+            } catch (PersonajeNotFoundException personajeNotFoundException) {
+                return new ResponseEntity("NO SE ENCONTRO NINGUN PERSONAJE CON EL NOMBRE INGRESADO", HttpStatus.NOT_FOUND);
+            } catch (Exception e) {
+                return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return ResponseEntity.ok(personajes);
         }
 
         if (edad != null) {
-            List<PersonajeResponseDto> personajes = personajeService.fetchPersonajeByEdad(edad);
-            if (personajes.isEmpty()) {
-                return new ResponseEntity<>("No se encontraron personajes con esa Edad", HttpStatus.NOT_FOUND);
+            try {
+                return ResponseEntity.ok(personajeService.fetchPersonajeByEdad(edad));
+            } catch (PersonajeNotFoundException personajeNotFoundException) {
+                return new ResponseEntity("NO SE ENCONTRO NINGUN PERSONAJE CON LA EDAD INGRESADA", HttpStatus.NOT_FOUND);
+            } catch (Exception e) {
+                return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return ResponseEntity.ok(personajes);
         }
 
         if (peso != null) {
-            List<PersonajeResponseDto> personajes = personajeService.fetchPersonajeByPeso(peso);
-            if (personajes.isEmpty()) {
-                return new ResponseEntity<>("No se encontraron personajes con ese Peso", HttpStatus.NOT_FOUND);
+            try {
+                return ResponseEntity.ok(personajeService.fetchPersonajeByPeso(peso));
+            } catch (PersonajeNotFoundException personajeNotFoundException) {
+                return new ResponseEntity("NO SE ENCONTRO NINGUN PERSONAJE CON EL PESO INGRESADO", HttpStatus.NOT_FOUND);
+            } catch (Exception e) {
+                return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return ResponseEntity.ok(personajes);
         }
 
-
-        //ToDo id_pelicula
         if (idMovie != null) {
             LOGGER.info("INSIDE FETCH_PERSONAJES_BY_ID_MOVIE (" + idMovie + ") -----> PERSONAJE_CONTROLLER");
-
-            List<PersonajeResponseDto> personajes = personajeService.fetchPersonajesByPeliculaId(idMovie);
-            if (personajes.isEmpty()) {
-                return new ResponseEntity<>("No se encontraron personajes con ese Peso", HttpStatus.NOT_FOUND);
+            try {
+                return ResponseEntity.ok(personajeService.fetchPersonajesByPeliculaId(idMovie));
+            } catch (NoSuchElementException noSuchElementException) {
+                return new ResponseEntity("NO SE ENCONTRO PELICULA CON ESE ID", HttpStatus.NOT_FOUND);
+            } catch (Exception e) {
+                return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return ResponseEntity.ok(personajes);
         }
 
-
-
-        List<PersonajeResponseDto> personajes = personajeService.fetchCharacters();
-        if (personajes.isEmpty()) {
-            return new ResponseEntity<>("No se encontraron personajes", HttpStatus.NOT_FOUND);
+        // Si no se ingreso ningun parametro devolvemos la lista de personajes completa.
+        try {
+            return ResponseEntity.ok(personajeService.fetchCharacters());
+        } catch (Exception e) {
+            return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.ok(personajes);
     }
 
+    /*
+
+
+    
+    WORKING HERE
+
+
+
+     */
 
     @Operation(summary = "Obtener todos los personajes")
     @GetMapping("/personaje")

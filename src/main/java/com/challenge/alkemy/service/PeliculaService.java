@@ -7,7 +7,7 @@ import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorPa
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
 import com.challenge.alkemy.error.pelicula.PeliculaBuscadaPorParametroIncorrectoException;
-import com.challenge.alkemy.error.pelicula.PeliculaNotFound;
+import com.challenge.alkemy.error.pelicula.PeliculaNotFoundException;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundInPeliculaException;
 import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
@@ -17,23 +17,23 @@ import java.util.List;
 public interface PeliculaService {
     DetallePeliculaResponseDto createPelicula(CreatePeliculaRequestDto pelicula) throws PersonajeNotFoundException, PeliculaAlreadyExistsException, GeneroNotFoundException;
 
-    DetallePeliculaResponseDto fetchPeliculaById(Long peliculaId) throws PeliculaNotFound;
+    DetallePeliculaResponseDto fetchPeliculaById(Long peliculaId) throws PeliculaNotFoundException;
 
-    PeliculaBuscadaPorParametroResponseDto fetchPeliculaByTitulo(String titulo) throws PeliculaNotFound;
+    PeliculaBuscadaPorParametroResponseDto fetchPeliculaByTitulo(String titulo) throws PeliculaNotFoundException;
 
-    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros() throws PeliculaNotFound;
+    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros() throws PeliculaNotFoundException;
 
-    List<DetallePeliculaResponseDto> fetchAllPeliculas() throws PeliculaNotFound;
+    List<DetallePeliculaResponseDto> fetchAllPeliculas() throws PeliculaNotFoundException;
 
-    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden) throws PeliculaNotFound, PeliculaBuscadaPorParametroIncorrectoException;
+    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden) throws PeliculaNotFoundException, PeliculaBuscadaPorParametroIncorrectoException;
 
     List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByGeneroId(Long generoId) throws GeneroNotFoundException;
 
     void deletePeliculaById(Long peliculaId) throws Exception;
 
-    DetallePeliculaResponseDto updatePelicula(Long peliculaId, UpdatePeliculaRequestDto peliculaRequest) throws PeliculaNotFound, PersonajeNotFoundException, PeliculaAlreadyExistsException;
+    DetallePeliculaResponseDto updatePelicula(Long peliculaId, UpdatePeliculaRequestDto peliculaRequest) throws PeliculaNotFoundException, PersonajeNotFoundException, PeliculaAlreadyExistsException;
 
-    DetallePeliculaResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFound, PersonajeNotFoundException, PersonajeYaEnUsoException;
+    DetallePeliculaResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFoundException, PersonajeNotFoundException, PersonajeYaEnUsoException;
 
-    DetallePeliculaResponseDto eliminarPersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFound, PersonajeNotFoundInPeliculaException;
+    DetallePeliculaResponseDto eliminarPersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFoundException, PersonajeNotFoundInPeliculaException;
 }

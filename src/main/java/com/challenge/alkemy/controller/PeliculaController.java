@@ -2,14 +2,11 @@ package com.challenge.alkemy.controller;
 
 import com.challenge.alkemy.entity.dto.peliculaDto.request.CreatePeliculaRequestDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.request.UpdatePeliculaRequestDto;
-import com.challenge.alkemy.entity.dto.peliculaDto.response.DetallePeliculaResponseDto;
-import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
-import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.error.ChallengeAlkemyException;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
 import com.challenge.alkemy.error.pelicula.PeliculaBuscadaPorParametroIncorrectoException;
-import com.challenge.alkemy.error.pelicula.PeliculaNotFound;
+import com.challenge.alkemy.error.pelicula.PeliculaNotFoundException;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundInPeliculaException;
 import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
@@ -24,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -45,7 +41,7 @@ public class PeliculaController {
         LOGGER.info("INSIDE FETCH_PELICULA_BY_ID_PELICULA -----> PELICULA_CONTROLLER");
         try {
             return ResponseEntity.ok(peliculaService.fetchPeliculaById(peliculaId));
-        } catch (PeliculaNotFound peliculaNotFound) {
+        } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO PELICULA CON ESE ID", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -58,7 +54,7 @@ public class PeliculaController {
         LOGGER.info("INSIDE FETCH_PELICULAS -----> PELICULA_CONTROLLER");
         try {
             return ResponseEntity.ok(peliculaService.fetchAllPeliculas());
-        } catch (PeliculaNotFound peliculaNotFound) {
+        } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity("NO SE ENCONTRARON PELICULAS", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -89,7 +85,7 @@ public class PeliculaController {
         try {
             peliculaService.deletePeliculaById(peliculaId);
             return new  ResponseEntity<>("PELICULA ELIMINADA CON EXITO", HttpStatus.OK);
-        } catch (PeliculaNotFound peliculaNotFound) {
+        } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO NINGUNA PELICULA CON ESE ID", HttpStatus.NOT_FOUND);
         }
         catch (Exception e) {
@@ -102,7 +98,7 @@ public class PeliculaController {
     public ResponseEntity updatePelicula(@Valid @PathVariable("id") Long peliculaId, @RequestBody UpdatePeliculaRequestDto peliculaRequest) {
         try {
             return ResponseEntity.ok(peliculaService.updatePelicula(peliculaId, peliculaRequest));
-        } catch (PeliculaNotFound peliculaNotFound) {
+        } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO PELICULA CON ESE ID", HttpStatus.NOT_FOUND);
         } catch (PersonajeNotFoundException personajeNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO PERSONAJE CON ESE ID", HttpStatus.NOT_FOUND);
@@ -121,13 +117,13 @@ public class PeliculaController {
             @RequestParam(required = false, name = "nombre") String nombre,
             @RequestParam(required = false, name = "genero") Long idGenero,
             @RequestParam(required = false, name = "orden") String orden
-    ) throws PeliculaNotFound {
+    ) throws PeliculaNotFoundException {
         LOGGER.info("INSIDE FETCH_MOVIES -----> PELICULAS_CONTROLLER");
 
         if (nombre != null) {
             try {
                 return ResponseEntity.ok(peliculaService.fetchPeliculaByTitulo(nombre));
-            } catch (PeliculaNotFound peliculaNotFound) {
+            } catch (PeliculaNotFoundException peliculaNotFoundException) {
                 return new ResponseEntity("NO SE ENCONTRO NINGUNA PELICULA CON EL TITULO INGRESADO", HttpStatus.NOT_FOUND);
             } catch (Exception e) {
                 return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -137,7 +133,7 @@ public class PeliculaController {
         if (orden != null) {
             try {
                 return ResponseEntity.ok(peliculaService.fetchPeliculasByOrder(orden));
-            } catch (PeliculaNotFound peliculaNotFound) {
+            } catch (PeliculaNotFoundException peliculaNotFoundException) {
                 return new ResponseEntity("NO SE ENCONTRARON PELICULAS A ORDENAR", HttpStatus.NOT_FOUND);
             } catch (PeliculaBuscadaPorParametroIncorrectoException peliculaBuscadaPorParametroIncorrectoException) {
                 return new ResponseEntity("EL PARAMETRO DE ORDENAMIENTO INGRESADO ES INCORRECTO", HttpStatus.BAD_REQUEST);
@@ -160,7 +156,7 @@ public class PeliculaController {
         // Si no se ingreso ningun parametro devolvemos la lista de peliculas completa
         try {
             return ResponseEntity.ok(peliculaService.fetchPeliculasSinParametros());
-        } catch (PeliculaNotFound peliculaNotFound) {
+        } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity("NO SE ENCONTRARON PELICULAS EN LA DB", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -177,7 +173,7 @@ public class PeliculaController {
             return ResponseEntity.ok(peliculaService.agregarPersonajeToPelicula(idMovie, idCharacter));
         } catch (PersonajeNotFoundException personajeNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO UN PERSONJE CON ESE ID", HttpStatus.NOT_FOUND);
-        } catch (PeliculaNotFound peliculaNotFound) {
+        } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO PELICULA CON ESE ID", HttpStatus.NOT_FOUND);
         } catch (PersonajeYaEnUsoException personajeYaEnUsoException) {
             return new ResponseEntity<>("EL PERSONAJE QUE DESEA AGREGAR YA ESTA EN LA PELICULA", HttpStatus.BAD_REQUEST);
@@ -194,7 +190,7 @@ public class PeliculaController {
     ) {
         try {
             return ResponseEntity.ok(peliculaService.eliminarPersonajeDePelicula(idMovie, idCharacter));
-        } catch (PeliculaNotFound peliculaNotFound) {
+        } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO PELICULA CON ESE ID" ,HttpStatus.NOT_FOUND);
         } catch (PersonajeNotFoundException personajeNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO PERSONAJE CON ESE ID" ,HttpStatus.NOT_FOUND);

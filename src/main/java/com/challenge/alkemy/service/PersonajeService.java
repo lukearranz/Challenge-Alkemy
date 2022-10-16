@@ -1,7 +1,8 @@
 package com.challenge.alkemy.service;
 
-import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeResponseDto;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeBuscadoPorParametroResponseDto;
 import com.challenge.alkemy.entity.Personaje;
+import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
 
 
 import java.util.List;
@@ -20,15 +21,13 @@ public interface PersonajeService {
 
     Personaje updatePersonaje(Long personajeId, Personaje personaje);
 
-    List<PersonajeResponseDto> fetchPersonajeByNombre(String nombre);
+    PersonajeBuscadoPorParametroResponseDto fetchPersonajeByNombre(String nombre) throws PersonajeNotFoundException;
 
-    List<PersonajeResponseDto> fetchPersonajeByEdad(int edad);
+    List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByEdad(int edad) throws PersonajeNotFoundException;
 
-    Object fetchPersonajeByPelicula(Long pelicula);
+    List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByPeso(Double peso) throws PersonajeNotFoundException;
 
-    List<PersonajeResponseDto> fetchPersonajeByPeso(Double peso);
+    List<PersonajeBuscadoPorParametroResponseDto> fetchCharacters();
 
-    List<PersonajeResponseDto> fetchCharacters();
-
-    List<PersonajeResponseDto> fetchPersonajesByPeliculaId(Long idMovie);
+    List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajesByPeliculaId(Long idMovie);
 }
