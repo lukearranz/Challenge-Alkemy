@@ -1,25 +1,26 @@
 package com.challenge.alkemy.service;
 
+import com.challenge.alkemy.entity.dto.personajeDto.request.CreateOrUpdatePersonajeRequestDto;
 import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeBuscadoPorParametroResponseDto;
-import com.challenge.alkemy.entity.Personaje;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeConDetalleResponseDto;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
+import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
 
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface PersonajeService {
 
-    List<Personaje> fetchPersonajes();
+    List<PersonajeConDetalleResponseDto> fetchPersonajes();
 
-    Personaje savePersonaje(Personaje personaje);
+    PersonajeConDetalleResponseDto savePersonaje(CreateOrUpdatePersonajeRequestDto personaje) throws PersonajeYaEnUsoException;
 
-    Optional<Personaje> fetchPersonajeById(Long personajeId);
+    PersonajeConDetalleResponseDto fetchPersonajeById(Long personajeId) throws PersonajeNotFoundException;
 
     void deletePersonajeById(Long personajeId) throws Exception;
 
-    Personaje updatePersonaje(Long personajeId, Personaje personaje);
+    PersonajeConDetalleResponseDto updatePersonaje(Long personajeId, CreateOrUpdatePersonajeRequestDto personajeRequest) throws PersonajeNotFoundException;
 
     PersonajeBuscadoPorParametroResponseDto fetchPersonajeByNombre(String nombre) throws PersonajeNotFoundException;
 

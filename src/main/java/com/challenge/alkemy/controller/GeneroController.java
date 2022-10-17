@@ -74,5 +74,4 @@ public class GeneroController {
                 return new ResponseEntity<>("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
             }
     }
-
 }

@@ -48,7 +48,7 @@ class PersonajeControllerTest {
                 .imagen("https://upload.wikimedia.org/wikipedia/commons/a/a0/Hulk_%282540708438%29.jpg")
                 .build();
 
-        Mockito.when(personajeService.savePersonaje(inputPersonaje)).thenReturn(personaje);
+        //Mockito.when(personajeService.savePersonaje(inputPersonaje)).thenReturn(personaje);
 
         mockMvc.perform(post("/personaje")
                 .contentType(MediaType.APPLICATION_JSON)

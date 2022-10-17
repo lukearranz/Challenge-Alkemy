@@ -3,6 +3,7 @@ package com.challenge.alkemy.security.service;
 import com.challenge.alkemy.entity.Usuario;
 import com.challenge.alkemy.repository.UsuarioRepository;
 import com.challenge.alkemy.service.EmailSenderService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,25 +14,17 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImp implements UserDetailsService, UserService {
 
-    @Autowired
     private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private PasswordService passwordService;
-
-    @Autowired
     private EmailSenderService emailSenderService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // Logic to get the user from the database.
-        Usuario userDB = usuarioRepository.findUsuarioByUsername(username);
-
-        if (userDB == null) {
-            throw new UsernameNotFoundException("USUARIO NO ENCONTRADO");
-        }
+        Usuario userDB = usuarioRepository.findUsuarioByUsername(username).orElseThrow(()-> new UsernameNotFoundException("USUARIO NO ENCONTRADO"));
         return new User(userDB.getUsername(), userDB.getPassword(), new ArrayList<>());
     }
 
