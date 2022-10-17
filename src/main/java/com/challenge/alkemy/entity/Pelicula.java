@@ -52,7 +52,6 @@ public class Pelicula {
 
     @NotNull
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name ="genero_id")
     private Genero genero;
 }

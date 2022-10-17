@@ -3,10 +3,10 @@ package com.challenge.alkemy.entity.dto.peliculaDto;
 import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.entity.dto.generoDto.response.CreateGeneroResponseDto;
-import com.challenge.alkemy.entity.dto.generoDto.response.GeneroResponseDto;
-import com.challenge.alkemy.entity.dto.peliculaDto.response.DetallePeliculaResponseDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaConDetalleResponseDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
-import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeResponseDto;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeConDetalleResponseDto;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeEnPeliculaResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Component
 public class PeliculaMapper {
 
-    public DetallePeliculaResponseDto peliculaToDetallePeliculaResponseDto(Pelicula pelicula) {
-        return DetallePeliculaResponseDto.builder()
+    public PeliculaConDetalleResponseDto peliculaToDetallePeliculaResponseDto(Pelicula pelicula) {
+        return PeliculaConDetalleResponseDto.builder()
                 .calificacion(pelicula.getCalificacion())
                 .fechaEstreno(pelicula.getFechaEstreno())
                 .genero(CreateGeneroResponseDto.builder()
@@ -34,8 +34,8 @@ public class PeliculaMapper {
     }
 
     // Este metodo lo usamos para mapear los personajes del metodo 'peliculaToCreatePeliculaResponseDto'
-    private PersonajeResponseDto mapPersonajeToPersonajeDto(Personaje personaje) {
-        return PersonajeResponseDto.builder()
+    private PersonajeEnPeliculaResponseDto mapPersonajeToPersonajeDto(Personaje personaje) {
+        return PersonajeEnPeliculaResponseDto.builder()
                 .id(personaje.getPersonajeId())
                 .imagen(personaje.getImagen())
                 .nombre(personaje.getNombre())

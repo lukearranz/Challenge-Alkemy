@@ -1,123 +1,127 @@
 package com.challenge.alkemy.service;
 
-import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeResponseDto;
+import com.challenge.alkemy.entity.Pelicula;
+import com.challenge.alkemy.entity.dto.personajeDto.PersonajeMapper;
+import com.challenge.alkemy.entity.dto.personajeDto.request.CreateOrUpdatePersonajeRequestDto;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeBuscadoPorParametroResponseDto;
 import com.challenge.alkemy.entity.Personaje;
+import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeConDetalleResponseDto;
+import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
+import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
+import com.challenge.alkemy.repository.PeliculaRepository;
 import com.challenge.alkemy.repository.PersonajeRepository;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class PersonajeServiceImp implements PersonajeService {
 
-    @Autowired
     private PersonajeRepository personajeRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private PersonajeMapper personajeMapper;
+    private PeliculaRepository peliculaRepository;
 
     @Override
-    public List<Personaje> fetchPersonajes() {
-        return personajeRepository.findAll();
+    public List<PersonajeConDetalleResponseDto> fetchPersonajes() {
+
+        List<Personaje> personajes = personajeRepository.findAll();
+        return personajeMapper.personajeToPersonajeConDetalleResponseDto(personajes);
     }
 
     @Override
-    public Personaje savePersonaje(Personaje personaje) {return personajeRepository.save(personaje);}
+    public PersonajeConDetalleResponseDto savePersonaje(CreateOrUpdatePersonajeRequestDto personajeRequest) throws PersonajeYaEnUsoException {
 
-    @Override
-    public Optional<Personaje> fetchPersonajeById(Long personajeId) {
-        return personajeRepository.findById(personajeId);
+        if (personajeRepository.findByNombre(personajeRequest.getNombre()).isPresent()) {
+            throw new PersonajeYaEnUsoException("EL PERSONAJE INDICADO YA EXISTE");
+        }
+        Personaje personajeToSave = Personaje.builder()
+                .nombre(personajeRequest.getNombre())
+                .imagen(personajeRequest.getImagen())
+                .edad(personajeRequest.getEdad())
+                .peso(personajeRequest.getPeso())
+                .historia(personajeRequest.getHistoria())
+                // Iniciamos las peliculas como un Array vacio, para evitar el 'null'
+                .peliculas(new ArrayList<>())
+                .build();
+        Personaje personajeGuardado = personajeRepository.save(personajeToSave);
+        return personajeMapper.personajeToPersonajeConDetalleResponseDto(personajeGuardado);
+
     }
 
     @Override
-    public void deletePersonajeById(Long personajeId) throws Exception {
+    public PersonajeConDetalleResponseDto fetchPersonajeById(Long personajeId) throws PersonajeNotFoundException {
 
+        Personaje personajeDB = personajeRepository.findById(personajeId).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO PERSONAJE CON EL ID INDICADO"));
+        return personajeMapper.personajeToPersonajeConDetalleResponseDto(personajeDB);
+    }
 
-        Personaje personajeDB = personajeRepository.findById(personajeId).orElseThrow(() -> new Exception("Personaje a eliminar por ID no encontrado"));
+    @Override
+    public void deletePersonajeById(Long personajeId) throws PersonajeNotFoundException {
 
+        Personaje personajeDB = personajeRepository.findById(personajeId).orElseThrow(() -> new PersonajeNotFoundException("NO SE ENCONTRO UN PERSONAJE CON ESE ID"));
+        // Primero eliminamos el personaje de todas las peliculas
         personajeDB.getPeliculas().forEach(pelicula -> pelicula.getPersonajes().remove(personajeDB));
-
         personajeRepository.delete(personajeDB);
     }
 
     @Override
-    public Personaje updatePersonaje(Long personajeId, Personaje personaje) {
+    public PersonajeConDetalleResponseDto updatePersonaje(Long personajeId, CreateOrUpdatePersonajeRequestDto personajeRequest) throws PersonajeNotFoundException {
 
-        Personaje personajeDB = personajeRepository.findById(personajeId).get();
-
-        // No necesitamos chequearlos por que no pueden ser nulos.
-        personajeDB.setEdad((personaje.getEdad()));
-        personajeDB.setPeso((personaje.getPeso()));
-
-        if (Objects.nonNull(personaje.getNombre()) && !personaje.getNombre().isEmpty()) {
-            personajeDB.setNombre((personaje.getNombre()));
-        }
-
-        if (Objects.nonNull(personaje.getImagen()) && !"".equalsIgnoreCase(personaje.getImagen())) {
-            personajeDB.setImagen((personaje.getImagen()));
-        }
-        if (Objects.nonNull(personaje.getHistoria()) && !"".equalsIgnoreCase(personaje.getHistoria())) {
-            personajeDB.setHistoria((personaje.getHistoria()));
-        }
-
-        return personajeRepository.save(personajeDB);
+        personajeRepository.findById(personajeId).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO PERSONAJE A EDITAR CON ESE ID"));
+        // Los fields del request son validados en el controller.
+        Personaje personajeToUpdate = Personaje.builder()
+                .personajeId(personajeId)
+                .nombre(personajeRequest.getNombre())
+                .imagen(personajeRequest.getImagen())
+                .edad(personajeRequest.getEdad())
+                .peso(personajeRequest.getPeso())
+                .historia(personajeRequest.getHistoria())
+                // Iniciamos las peliculas como un Array vacio, para evitar el 'null'
+                .peliculas(new ArrayList<>())
+                .build();
+        Personaje personajeGuardado = personajeRepository.save(personajeToUpdate);
+        return personajeMapper.personajeToPersonajeConDetalleResponseDto(personajeGuardado);
     }
 
-    // Estos metodos devuelven DTO
+
     @Override
-    public List<PersonajeResponseDto> fetchCharacters() {
-        return convertEntityToDto(personajeRepository.findAll());
+    public List<PersonajeBuscadoPorParametroResponseDto> fetchCharacters() {
+
+        List<Personaje> personajesDB = personajeRepository.findAll();
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesDB);
     }
 
     @Override
-    public List<PersonajeResponseDto> fetchPersonajesByPeliculaId(Long idMovie) {
+    public List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajesByPeliculaId(Long idMovie) {
 
-        // To Do
-
-        return null;
+        Pelicula peliculaDB = peliculaRepository.findById(idMovie).orElseThrow();
+        List<Personaje> personajesEnPelicula = peliculaDB.getPersonajes();
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesEnPelicula);
     }
 
     @Override
-    public List<PersonajeResponseDto> fetchPersonajeByNombre(String nombre) {
-        return convertEntityToDto((List<Personaje>) personajeRepository.findByNombre(nombre));
+    public PersonajeBuscadoPorParametroResponseDto fetchPersonajeByNombre(String nombre) throws PersonajeNotFoundException {
+
+        Personaje personajeEncontrado = personajeRepository.findByNombre(nombre).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO PERSONAJE CON EL NOMBRE INDICADO"));
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajeEncontrado);
     }
 
     @Override
-    public List<PersonajeResponseDto> fetchPersonajeByEdad(int edad) {
-        return convertEntityToDto(personajeRepository.findByEdad(edad));
+    public List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByEdad(int edad) throws PersonajeNotFoundException {
+
+        List<Personaje> personajesDB = personajeRepository.findByEdad(edad).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO NINGUN PERSONAJE CON LA EDAD INDICADA"));
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesDB);
     }
 
     @Override
-    public List<PersonajeResponseDto> fetchPersonajeByPeso(Double peso) {
-        return convertEntityToDto(personajeRepository.findByPeso(peso));
-    }
+    public List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByPeso(Double peso) throws PersonajeNotFoundException {
 
-    //ToDo
-    @Override
-    public Object fetchPersonajeByPelicula(Long pelicula) {
-
-        return null;
-    }
-
-
-
-
-    // Este metodo recibe una lista de Personajes y la transforma en una lista de PersonajeResponseDto
-    private List<PersonajeResponseDto> convertEntityToDto(List<Personaje> personajes) {
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-        List<PersonajeResponseDto> personajeDTO = new ArrayList<>();
-
-        for (Personaje personaje : personajes) {
-            personajeDTO.add(modelMapper.map(personaje, PersonajeResponseDto.class));
-        }
-
-        return personajeDTO;
+        List<Personaje> personajesDB = personajeRepository.findByPeso(peso).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO NINGUN PERSONAJE CON EL PESO INDICADO"));
+        return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesDB);
     }
 
 }

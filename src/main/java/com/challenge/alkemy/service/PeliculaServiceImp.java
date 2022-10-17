@@ -4,14 +4,14 @@ import com.challenge.alkemy.entity.Genero;
 import com.challenge.alkemy.entity.dto.peliculaDto.PeliculaMapper;
 import com.challenge.alkemy.entity.dto.peliculaDto.request.CreatePeliculaRequestDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.request.UpdatePeliculaRequestDto;
-import com.challenge.alkemy.entity.dto.peliculaDto.response.DetallePeliculaResponseDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaConDetalleResponseDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
 import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
 import com.challenge.alkemy.error.pelicula.PeliculaBuscadaPorParametroIncorrectoException;
-import com.challenge.alkemy.error.pelicula.PeliculaNotFound;
+import com.challenge.alkemy.error.pelicula.PeliculaNotFoundException;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundInPeliculaException;
 import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
@@ -34,17 +34,17 @@ public class PeliculaServiceImp implements PeliculaService{
     
     private final PeliculaRepository peliculaRepository;
     private final PersonajeRepository personajeRepository;
-    private final PersonajeService personajeService;
     private final GeneroRepository generoRepository;
     private final PeliculaMapper peliculaMapper;
 
     @Override
-    public List<DetallePeliculaResponseDto> fetchAllPeliculas() throws PeliculaNotFound {
+    public List<PeliculaConDetalleResponseDto> fetchAllPeliculas() throws PeliculaNotFoundException {
+
         List<Pelicula> peliculasDB = peliculaRepository.findAll();
         if (peliculasDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRARON PELICULAS");
+            throw new PeliculaNotFoundException("NO SE ENCONTRARON PELICULAS");
         }
-        List<DetallePeliculaResponseDto> peliculasMapeadas = new ArrayList<>();
+        List<PeliculaConDetalleResponseDto> peliculasMapeadas = new ArrayList<>();
         for (Pelicula pelicula: peliculasDB) {
             peliculasMapeadas.add(peliculaMapper.peliculaToDetallePeliculaResponseDto(pelicula));
         }
@@ -52,18 +52,19 @@ public class PeliculaServiceImp implements PeliculaService{
     }
 
     @Override
-    public List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden) throws PeliculaNotFound, PeliculaBuscadaPorParametroIncorrectoException {
+    public List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden) throws PeliculaNotFoundException, PeliculaBuscadaPorParametroIncorrectoException {
+
         if (orden.equals("ASC")) {
             List<Pelicula> peliculasOrdenadas = peliculaRepository.findAllByOrderByTituloAsc();
             if (peliculasOrdenadas.isEmpty()) {
-                throw new PeliculaNotFound("NO SE ENCONTRARON PELICULAS A ORDENAR");
+                throw new PeliculaNotFoundException("NO SE ENCONTRARON PELICULAS A ORDENAR");
             }
             return peliculaMapper.peliculaToPeliculaBuscadaPorParametroResponseDto(peliculasOrdenadas);
         }
         if (orden.equals("DESC")) {
             List<Pelicula> peliculasOrdenadas = peliculaRepository.findAllByOrderByTituloDesc();
             if (peliculasOrdenadas.isEmpty()) {
-                throw new PeliculaNotFound("NO SE ENCONTRARON PELICULAS A ORDENAR");
+                throw new PeliculaNotFoundException("NO SE ENCONTRARON PELICULAS A ORDENAR");
             }
             return peliculaMapper.peliculaToPeliculaBuscadaPorParametroResponseDto(peliculasOrdenadas);
         }
@@ -72,45 +73,35 @@ public class PeliculaServiceImp implements PeliculaService{
 
     @Override
     public List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByGeneroId(Long generoId) throws GeneroNotFoundException {
-        Optional<Genero> generoDB = generoRepository.findById(generoId);
-        if (generoDB.isEmpty()) {
-            throw new GeneroNotFoundException("NO SE ENCONTRO GENERO CON ESE ID");
-        }
+
+        Genero generoDB = generoRepository.findById(generoId).orElseThrow(()-> new GeneroNotFoundException("NO SE ENCONTRO GENERO CON ESE ID"));
         // Del Genero obtenemos sus Peliculas asociadas y las guardamos en una lista.
-        List<Pelicula> peliculasObtenidasDelGenero = generoDB.orElseThrow().getPeliculas();
+        List<Pelicula> peliculasObtenidasDelGenero = generoDB.getPeliculas();
         return peliculaMapper.peliculaToPeliculaBuscadaPorParametroResponseDto(peliculasObtenidasDelGenero);
     }
 
     @Override
     @Transactional
-    public void deletePeliculaById(Long peliculaId) throws PeliculaNotFound {
-        Optional<Pelicula> peliculaDB = peliculaRepository.findById(peliculaId);
-        if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("PELICULA NO ENCONTRADA");
-        }
-        peliculaRepository.delete(peliculaDB.get());
+    public void deletePeliculaById(Long peliculaId) throws PeliculaNotFoundException {
+
+        Pelicula peliculaDB = peliculaRepository.findById(peliculaId).orElseThrow(()-> new PeliculaNotFoundException("PELICULA NO ENCONTRADA"));
+        peliculaRepository.delete(peliculaDB);
     }
 
     @Override
-    public DetallePeliculaResponseDto updatePelicula(@Valid Long peliculaId, UpdatePeliculaRequestDto peliculaRequest) throws PeliculaNotFound, PersonajeNotFoundException, PeliculaAlreadyExistsException {
+    public PeliculaConDetalleResponseDto updatePelicula(@Valid Long peliculaId, UpdatePeliculaRequestDto peliculaRequest) throws PeliculaNotFoundException, PersonajeNotFoundException, PeliculaAlreadyExistsException {
 
         // Aqui chequeamos que el titulo que se desea ingresar, no este en uso.
         if (peliculaRepository.findFirstByTitulo(peliculaRequest.getTitulo()).isPresent()) {
             throw new PeliculaAlreadyExistsException("EL TITULO SOLICITADO YA EXISTE");
         }
-
-        Optional<Pelicula> peliculaDB = peliculaRepository.findById(peliculaId);
-        if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRO PELICULA CON ESE ID");
-        }
-
+        Pelicula peliculaDB = peliculaRepository.findById(peliculaId).orElseThrow(()-> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID"));
         List<Optional<Personaje>> lista = peliculaRequest.getPersonajesId().stream().map(personajeRepository::findById).collect(Collectors.toList());
         for (Optional<Personaje> personaje: lista) {
             if (personaje.isEmpty()) {
                 throw new PersonajeNotFoundException("NO SE ENCONTRO EL PERSONAJE");
             }
         }
-
         Genero genero = generoRepository.findById(peliculaRequest.getGeneroId()).orElseThrow();
 
         Pelicula peliculaToUpdate = Pelicula.builder()
@@ -122,69 +113,55 @@ public class PeliculaServiceImp implements PeliculaService{
                 .personajes(lista.stream().map(personajeOptional -> personajeOptional.get()).collect(Collectors.toList()))
                 .genero(genero)
                 .build();
-
         Pelicula peliculaEditada = peliculaRepository.save(peliculaToUpdate);
         return peliculaMapper.peliculaToDetallePeliculaResponseDto(peliculaEditada);
     }
 
     @Override
-    public DetallePeliculaResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFound, PersonajeNotFoundException, PersonajeYaEnUsoException {
+    public PeliculaConDetalleResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFoundException, PersonajeNotFoundException, PersonajeYaEnUsoException {
+
         // Chequeamos si el personaje a agregar existe.
-        Optional<Personaje> personajeToAdd = personajeService.fetchPersonajeById(idCharacter);
-        if (personajeToAdd.isEmpty()) {
-            throw new PersonajeNotFoundException("NO SE ENCONTRO UN PERSONJE CON ESE ID");
-        }
+        Personaje personajeToAdd = personajeRepository.findById(idCharacter).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO PERSONAJE CON ESE ID"));
+
         // Chequeaamos si la pelicila existe.
-        Optional<Pelicula> peliculaDB = peliculaRepository.findById(idMovie);
-        if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRO PELICULA CON ESE ID");
-        }
+        Pelicula peliculaDB = peliculaRepository.findById(idMovie).orElseThrow(()-> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID"));
+
         // Chequemos si la pelicula no tiene ya al personaje que se quiere agregar.
-        List<Personaje> personajesInMovie = peliculaDB.get().getPersonajes();
+        List<Personaje> personajesInMovie = peliculaDB.getPersonajes();
         for (Personaje personaje:personajesInMovie) {
             if (personaje.getPersonajeId() == idCharacter) {
                 throw new PersonajeYaEnUsoException("EL PERSONAJE QUE DESEA AGREGAR YA ESTA EN LA PELICULA");
             }
         }
+        personajesInMovie.add(personajeToAdd);
+        peliculaDB.setPersonajes(personajesInMovie);
+        peliculaDB.setPeliculaId(idMovie);
 
-        Personaje personajeToSave = personajeToAdd.get();
-        Pelicula peliculaToSave = peliculaDB.get();
-
-        personajesInMovie.add(personajeToSave);
-        peliculaToSave.setPersonajes(personajesInMovie);
-        peliculaToSave.setPeliculaId(idMovie);
-
-        return peliculaMapper.peliculaToDetallePeliculaResponseDto(peliculaRepository.save(peliculaToSave));
+        return peliculaMapper.peliculaToDetallePeliculaResponseDto(peliculaRepository.save(peliculaDB));
     }
 
     @Override
-    public DetallePeliculaResponseDto eliminarPersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFound, PersonajeNotFoundInPeliculaException {
+    public PeliculaConDetalleResponseDto eliminarPersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFoundException, PersonajeNotFoundInPeliculaException {
 
         // Chequeamos si el personaje a eliminar existe.
-        Optional<Personaje> personajeToDelete = personajeService.fetchPersonajeById(idCharacter);
-        if (personajeToDelete.isEmpty()) {
-            throw new PersonajeNotFoundException("NO SE ENCONTRO UN PERSONJE CON ESE ID");
-        }
+        Personaje personajeToDelete = personajeRepository.findById(idCharacter).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO UN PERSONAJE CON ESE ID"));
+
         // Chequeaamos si la pelicila existe.
-        Optional<Pelicula> peliculaDB = peliculaRepository.findById(idMovie);
-        if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRO PELICULA CON ESE ID");
-        }
+        Pelicula peliculaDB = peliculaRepository.findById(idMovie).orElseThrow(()-> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID"));
 
-        Pelicula peliculaToEdit = peliculaDB.orElseThrow();
-        List<Personaje> personajesInMovie = peliculaToEdit.getPersonajes();
+        List<Personaje> personajesInMovie = peliculaDB.getPersonajes();
 
-        if (!personajesInMovie.contains(personajeToDelete.get())) {
+        if (!personajesInMovie.contains(personajeToDelete)) {
             throw new PersonajeNotFoundInPeliculaException("NO SE ENCONTRO EL PERSONAJE A ELIMINAR EN ESTA PELICULA");
         }
-        personajesInMovie.remove(personajeToDelete.get());
-        peliculaToEdit.setPersonajes(personajesInMovie);
+        personajesInMovie.remove(personajeToDelete);
+        peliculaDB.setPersonajes(personajesInMovie);
 
-        return peliculaMapper.peliculaToDetallePeliculaResponseDto(peliculaRepository.save(peliculaToEdit));
+        return peliculaMapper.peliculaToDetallePeliculaResponseDto(peliculaRepository.save(peliculaDB));
     }
 
     @Override
-    public DetallePeliculaResponseDto createPelicula(@Valid CreatePeliculaRequestDto peliculaRequest) throws PeliculaAlreadyExistsException, PersonajeNotFoundException {
+    public PeliculaConDetalleResponseDto createPelicula(@Valid CreatePeliculaRequestDto peliculaRequest) throws PeliculaAlreadyExistsException, PersonajeNotFoundException {
 
         if (peliculaRepository.findByTitulo(peliculaRequest.getTitulo()).isPresent()) {
             throw new PeliculaAlreadyExistsException("LA PELICULA YA EXISTE");
@@ -212,26 +189,24 @@ public class PeliculaServiceImp implements PeliculaService{
     }
 
     @Override
-    public DetallePeliculaResponseDto fetchPeliculaById(Long peliculaId) throws PeliculaNotFound {
-        Optional<Pelicula> peliculaDB = peliculaRepository.findById(peliculaId);
-        if (peliculaDB.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRO NINGUNA PELICULA CON ESE ID");
-        }
-        return peliculaMapper.peliculaToDetallePeliculaResponseDto(peliculaDB.get());
+    public PeliculaConDetalleResponseDto fetchPeliculaById(Long peliculaId) throws PeliculaNotFoundException {
+
+        Pelicula peliculaDB = peliculaRepository.findById(peliculaId).orElseThrow(()-> new PeliculaNotFoundException("NO SE ENCONTRO NINGUNA PELICULA CON ESE ID"));
+        return peliculaMapper.peliculaToDetallePeliculaResponseDto(peliculaDB);
     }
 
     @Override
-    public List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros() throws PeliculaNotFound {
+    public List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros() throws PeliculaNotFoundException {
         List<Pelicula> peliculas = peliculaRepository.findAll();
         if (peliculas.isEmpty()) {
-            throw new PeliculaNotFound("NO SE ENCONTRARON PELICULAS");
+            throw new PeliculaNotFoundException("NO SE ENCONTRARON PELICULAS");
         }
         return peliculaMapper.peliculaToPeliculaBuscadaPorParametroResponseDto(peliculas);
     }
 
     @Override
-    public PeliculaBuscadaPorParametroResponseDto fetchPeliculaByTitulo(String titulo) throws PeliculaNotFound {
-        Pelicula pelicula = peliculaRepository.findByTitulo(titulo).orElseThrow(() -> new PeliculaNotFound("NO SE ENCONTRO PELICULA CON ESE TITULO"));
+    public PeliculaBuscadaPorParametroResponseDto fetchPeliculaByTitulo(String titulo) throws PeliculaNotFoundException {
+        Pelicula pelicula = peliculaRepository.findByTitulo(titulo).orElseThrow(() -> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE TITULO"));
         return peliculaMapper.peliculaToPeliculaBuscadaPorTituloDtoResponse(pelicula);
     }
 

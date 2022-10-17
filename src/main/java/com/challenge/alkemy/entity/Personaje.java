@@ -22,13 +22,13 @@ public class Personaje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long personajeId;
 
-    @Column(name = "imagen")
-    @NotNull
-    private String imagen;
-
     @Column(name = "nombre")
     @NotNull
     private String nombre;
+
+    @Column(name = "imagen")
+    @NotNull
+    private String imagen;
 
     @Column(name = "edad")
     private int edad;
@@ -42,6 +42,5 @@ public class Personaje {
     @ManyToMany(
             mappedBy = "personajes"
     )
-    @JsonIgnore
     private List<Pelicula> peliculas;
 }

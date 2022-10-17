@@ -1,11 +1,8 @@
 package com.challenge.alkemy.controller;
 
-import com.challenge.alkemy.entity.Genero;
 import com.challenge.alkemy.entity.dto.generoDto.request.CreateGeneroRequestDto;
-import com.challenge.alkemy.entity.dto.generoDto.response.GeneroResponseDto;
 import com.challenge.alkemy.error.genero.GeneroAlreadyInUseException;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
-import com.challenge.alkemy.error.pelicula.PeliculaNotFound;
 import com.challenge.alkemy.service.GeneroService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
@@ -13,12 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class GeneroController {
@@ -80,5 +74,4 @@ public class GeneroController {
                 return new ResponseEntity<>("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
             }
     }
-
 }
