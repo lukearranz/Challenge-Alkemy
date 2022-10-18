@@ -1,10 +1,10 @@
 package com.challenge.alkemy.security.service;
 
 import com.challenge.alkemy.entity.Usuario;
+import com.challenge.alkemy.error.user.UsernameAlreadyTakenException;
 import com.challenge.alkemy.repository.UsuarioRepository;
 import com.challenge.alkemy.service.EmailSenderService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,24 +29,20 @@ public class UserServiceImp implements UserDetailsService, UserService {
     }
 
     @Override
-    public String createUser(Usuario usuario) {
+    public void createUser(Usuario usuario) throws UsernameAlreadyTakenException {
 
         // Buscamos el User en la DB para ver si ya existe.
-        Usuario usuarioDB = usuarioRepository.findUsuarioByUsername(usuario.getUsername());
-        if (usuarioDB == null) {
-            // Encriptamos la contraseña antes de guardarla
-            usuario.setPassword(passwordService.encryptPassword(usuario.getPassword()));
-            usuarioRepository.save(usuario);
-            // Aqui enviamos el mail de registro.
-            emailSenderService.sendSimpleEmail(
-                    usuario.getEmail(),
-                    "Gracias " + usuario.getUsername() + " por registrarse en esta API!",
-                    "Mail de prueba Registro"
-            );
-            return "USUARIO CREADO CON EXITO";
+        if (usuarioRepository.findUsuarioByUsername(usuario.getUsername()).isPresent()) {
+            throw new UsernameAlreadyTakenException("EL USUARIO YA SE ENCUENTRA EN USO");
         }
-        return "EL USUARIO ELEGIDO YA ESTA EN USO";
+        // Encriptamos la contraseña antes de guardarla
+        usuario.setPassword(passwordService.encryptPassword(usuario.getPassword()));
+        usuarioRepository.save(usuario);
+        // Aqui enviamos el mail de registro.
+        emailSenderService.sendSimpleEmail(
+                usuario.getEmail(),
+                "Gracias " + usuario.getUsername() + " por registrarse en esta API!",
+                "Mail de prueba Registro"
+        );
     }
-
-
 }

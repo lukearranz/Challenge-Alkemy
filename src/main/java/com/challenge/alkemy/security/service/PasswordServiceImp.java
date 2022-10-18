@@ -1,5 +1,6 @@
 package com.challenge.alkemy.security.service;
 
+import com.challenge.alkemy.error.user.UserAndPassDontMatchException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,11 @@ public class PasswordServiceImp implements PasswordService{
     }
 
     @Override
-    public boolean verifyPassword(String originalPassword, String hashPassword) {
+    public boolean verifyPassword(String originalPassword, String hashPassword) throws UserAndPassDontMatchException {
         // Aqui chequeamos que las contraseñas coincidan.
+        if (!b.matches(originalPassword,hashPassword)) {
+            throw new UserAndPassDontMatchException("USUARIO O CONTRASEÑA INCORRECTOS");
+        }
         return b.matches(originalPassword, hashPassword);
     }
 }
