@@ -87,8 +87,7 @@ public class PeliculaController {
             return new  ResponseEntity<>("PELICULA ELIMINADA CON EXITO", HttpStatus.OK);
         } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO NINGUNA PELICULA CON ESE ID", HttpStatus.NOT_FOUND);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -137,8 +136,7 @@ public class PeliculaController {
                 return new ResponseEntity("NO SE ENCONTRARON PELICULAS A ORDENAR", HttpStatus.NOT_FOUND);
             } catch (PeliculaBuscadaPorParametroIncorrectoException peliculaBuscadaPorParametroIncorrectoException) {
                 return new ResponseEntity("EL PARAMETRO DE ORDENAMIENTO INGRESADO ES INCORRECTO", HttpStatus.BAD_REQUEST);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return new ResponseEntity("ALGO SALIO MAL",HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
