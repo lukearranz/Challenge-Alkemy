@@ -25,7 +25,7 @@ class PeliculaRepositoryTest {
     // Creamos personajes ficticios
     Personaje personajeFicticioA = Personaje.builder()
             .personajeId(1)
-            
+
             .build();
 
     // Creamos peliculas ficticia
