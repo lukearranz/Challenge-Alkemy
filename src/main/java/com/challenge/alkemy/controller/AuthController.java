@@ -28,10 +28,13 @@ public class AuthController {
     private JWTUtility jwtUtility;
     private UserService userService;
     private PasswordService passwordService;
+    // make fields final
 
+    // Use LOG4J2
     // Logger for debugging the application
     private final Logger LOGGER = LoggerFactory.getLogger(PersonajeController.class);
 
+    // Add @valid in the method to validate that the endpoint validates the contrains
     @PostMapping("/login")
     public ResponseEntity authenticate(@RequestBody JwtRequestDto jwtRequestDto) {
 
@@ -39,6 +42,7 @@ public class AuthController {
         try {
             String hashedPass = userService.loadUserByUsername(jwtRequestDto.getUsername()).getPassword();
             // Chequeamos que usuario y contraseña hagan match.
+            // remove comment the name of the method verifyPassword its clear enought.
             passwordService.verifyPassword(jwtRequestDto.getPassword(), hashedPass);
             final UserDetails userDetails = userService.loadUserByUsername(jwtRequestDto.getUsername());
             final String token = jwtUtility.generateToken(userDetails);
