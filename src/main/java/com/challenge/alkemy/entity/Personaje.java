@@ -1,46 +1,41 @@
 package com.challenge.alkemy.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "PERSONAJE")
 public class Personaje {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private long personajeId;
 
-    @Column(name = "nombre")
-    @NotNull
+    @Column(name = "NOMBRE")
     private String nombre;
 
-    @Column(name = "imagen")
-    @NotNull
+    @Column(name = "IMAGEN")
     private String imagen;
 
-    @Column(name = "edad")
+    @Column(name = "EDAD")
     private int edad;
 
-    @Column(name = "peso")
+    @Column(name = "PESO")
     private double peso;
 
-    @Column(name = "historia")
+    @Column(name = "HISTORIA")
     private String historia;
 
-    @ManyToMany(
-            mappedBy = "personajes"
-    )
+    @ManyToMany(mappedBy = "personajes")
     private List<Pelicula> peliculas;
 }

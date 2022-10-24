@@ -1,8 +1,6 @@
 package com.challenge.alkemy.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,39 +17,45 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "PELICULA")
 public class Pelicula {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long peliculaId;
-    @Column(name = "imagen")
-    private String imagen;
-    @Column(name = "titulo")
+
+    @Column(name = "TITULO")
     private String titulo;
 
+    @Column(name = "IMAGEN")
+    private String imagen;
+
     @JsonFormat(pattern="dd-MM-yyyy")
-    @Column(name = "fechaDeEstreno")
+    @Column(name = "FECHA_DE_ESTRENO")
     private Date fechaEstreno;
 
-    @NotNull
+
     @Min(value = 1, message = "La calificacion no puede ser menor a 1")
     @Max(value = 5, message = "La calificacion no puede ser mayor a 5")
-    @Column(name = "calificacion")
+    @Column(name = "CALIFICACION")
     private int calificacion;
 
     @ManyToMany
     @JoinTable(
-            name = "personajes_peliculas",
+            name = "PERSONAJES_PELICULAS",
             joinColumns = @JoinColumn(
-                    name = "pelicula_id"
+                    name = "PELICULA_ID"
             ),
             inverseJoinColumns = @JoinColumn(
-                    name = "personaje_id"
+                    name = "PERSONAJE_ID"
             )
     )
     private List<Personaje> personajes;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name ="genero_id")
     private Genero genero;
+
 }
+

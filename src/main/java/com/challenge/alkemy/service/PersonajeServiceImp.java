@@ -1,10 +1,10 @@
 package com.challenge.alkemy.service;
 
 import com.challenge.alkemy.entity.Pelicula;
+import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.entity.dto.personajeDto.PersonajeMapper;
 import com.challenge.alkemy.entity.dto.personajeDto.request.CreateOrUpdatePersonajeRequestDto;
 import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeBuscadoPorParametroResponseDto;
-import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeConDetalleResponseDto;
 import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
 import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -26,7 +25,7 @@ public class PersonajeServiceImp implements PersonajeService {
     private PeliculaRepository peliculaRepository;
 
     @Override
-    public List<PersonajeConDetalleResponseDto> fetchPersonajes() {
+    public List<PersonajeConDetalleResponseDto> getAllPersonajes() {
 
         List<Personaje> personajes = personajeRepository.findAll();
         return personajeMapper.personajeToPersonajeConDetalleResponseDto(personajes);
@@ -53,7 +52,7 @@ public class PersonajeServiceImp implements PersonajeService {
     }
 
     @Override
-    public PersonajeConDetalleResponseDto fetchPersonajeById(Long personajeId) throws PersonajeNotFoundException {
+    public PersonajeConDetalleResponseDto getPersonajeById(Long personajeId) throws PersonajeNotFoundException {
 
         Personaje personajeDB = personajeRepository.findById(personajeId).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO PERSONAJE CON EL ID INDICADO"));
         return personajeMapper.personajeToPersonajeConDetalleResponseDto(personajeDB);
@@ -89,14 +88,14 @@ public class PersonajeServiceImp implements PersonajeService {
 
 
     @Override
-    public List<PersonajeBuscadoPorParametroResponseDto> fetchCharacters() {
+    public List<PersonajeBuscadoPorParametroResponseDto> getPersonajes() {
 
         List<Personaje> personajesDB = personajeRepository.findAll();
         return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesDB);
     }
 
     @Override
-    public List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajesByPeliculaId(Long idMovie) {
+    public List<PersonajeBuscadoPorParametroResponseDto> getPersonajesByPeliculaId(Long idMovie) {
 
         Pelicula peliculaDB = peliculaRepository.findById(idMovie).orElseThrow();
         List<Personaje> personajesEnPelicula = peliculaDB.getPersonajes();
@@ -104,21 +103,21 @@ public class PersonajeServiceImp implements PersonajeService {
     }
 
     @Override
-    public PersonajeBuscadoPorParametroResponseDto fetchPersonajeByNombre(String nombre) throws PersonajeNotFoundException {
+    public PersonajeBuscadoPorParametroResponseDto getPersonajeByNombre(String nombre) throws PersonajeNotFoundException {
 
         Personaje personajeEncontrado = personajeRepository.findByNombre(nombre).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO PERSONAJE CON EL NOMBRE INDICADO"));
         return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajeEncontrado);
     }
 
     @Override
-    public List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByEdad(int edad) throws PersonajeNotFoundException {
+    public List<PersonajeBuscadoPorParametroResponseDto> getPersonajeByEdad(int edad) throws PersonajeNotFoundException {
 
         List<Personaje> personajesDB = personajeRepository.findByEdad(edad).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO NINGUN PERSONAJE CON LA EDAD INDICADA"));
         return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesDB);
     }
 
     @Override
-    public List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByPeso(Double peso) throws PersonajeNotFoundException {
+    public List<PersonajeBuscadoPorParametroResponseDto> getPersonajeByPeso(Double peso) throws PersonajeNotFoundException {
 
         List<Personaje> personajesDB = personajeRepository.findByPeso(peso).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO NINGUN PERSONAJE CON EL PESO INDICADO"));
         return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajesDB);

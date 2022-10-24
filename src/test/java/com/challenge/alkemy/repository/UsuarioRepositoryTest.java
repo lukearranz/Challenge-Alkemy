@@ -1,12 +1,9 @@
 package com.challenge.alkemy.repository;
 
 import com.challenge.alkemy.entity.Usuario;
-import com.challenge.alkemy.security.service.PasswordService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class UsuarioRepositoryTest {
@@ -29,10 +26,8 @@ class UsuarioRepositoryTest {
     @Test
     @DisplayName("Verificar si podemos buscar un Usuario por nombre")
     void findUsuarioByUsername() {
-        // Guardamos el User.
+
         usuarioRepository.save(usuarioFicticio);
-
-        Assertions.assertEquals(usuarioFicticio, usuarioRepository.findUsuarioByUsername("TestingUser"));
-
+        Assertions.assertEquals(usuarioFicticio, usuarioRepository.findByUsername("TestingUser").get());
     }
 }

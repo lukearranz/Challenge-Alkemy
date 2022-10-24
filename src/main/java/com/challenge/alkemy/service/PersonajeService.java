@@ -12,23 +12,23 @@ import java.util.List;
 
 public interface PersonajeService {
 
-    List<PersonajeConDetalleResponseDto> fetchPersonajes();
+    List<PersonajeConDetalleResponseDto> getAllPersonajes();
 
     PersonajeConDetalleResponseDto savePersonaje(CreateOrUpdatePersonajeRequestDto personaje) throws PersonajeYaEnUsoException;
 
-    PersonajeConDetalleResponseDto fetchPersonajeById(Long personajeId) throws PersonajeNotFoundException;
+    PersonajeConDetalleResponseDto getPersonajeById(Long personajeId) throws PersonajeNotFoundException;
 
     void deletePersonajeById(Long personajeId) throws Exception;
 
     PersonajeConDetalleResponseDto updatePersonaje(Long personajeId, CreateOrUpdatePersonajeRequestDto personajeRequest) throws PersonajeNotFoundException;
 
-    PersonajeBuscadoPorParametroResponseDto fetchPersonajeByNombre(String nombre) throws PersonajeNotFoundException;
+    PersonajeBuscadoPorParametroResponseDto getPersonajeByNombre(String nombre) throws PersonajeNotFoundException;
 
-    List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByEdad(int edad) throws PersonajeNotFoundException;
+    List<PersonajeBuscadoPorParametroResponseDto> getPersonajeByEdad(int edad) throws PersonajeNotFoundException;
 
-    List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajeByPeso(Double peso) throws PersonajeNotFoundException;
+    List<PersonajeBuscadoPorParametroResponseDto> getPersonajeByPeso(Double peso) throws PersonajeNotFoundException;
 
-    List<PersonajeBuscadoPorParametroResponseDto> fetchCharacters();
+    List<PersonajeBuscadoPorParametroResponseDto> getPersonajes();
 
-    List<PersonajeBuscadoPorParametroResponseDto> fetchPersonajesByPeliculaId(Long idMovie);
+    List<PersonajeBuscadoPorParametroResponseDto> getPersonajesByPeliculaId(Long idMovie);
 }

@@ -10,7 +10,7 @@ import com.challenge.alkemy.error.pelicula.PeliculaNotFoundException;
 import java.util.List;
 
 public interface GeneroService {
-    List<GeneroResponseDto> fetchGeneros() throws GeneroNotFoundException;
+    List<GeneroResponseDto> getAllGeneros() throws GeneroNotFoundException;
 
     CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto genero) throws GeneroAlreadyInUseException, PeliculaNotFoundException;
 

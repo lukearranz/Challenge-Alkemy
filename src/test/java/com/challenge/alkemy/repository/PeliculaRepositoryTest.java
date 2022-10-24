@@ -7,6 +7,9 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -15,17 +18,33 @@ class PeliculaRepositoryTest {
     @Autowired
     PeliculaRepository peliculaRepository;
 
-    // Creamos un genero ficticio
+    @Autowired
+    GeneroRepository generoRepository;
+
+    @Autowired
+    PersonajeRepository personajeRepository;
+
+    // Creamos un genero ficticio a guardar
     Genero generoFicticio = Genero.builder()
-            .generoId(1L)
             .nombre("Terror")
-            .imagen("gfdgfdgfdgfd")
+            .imagen("https://imagenDeGeneroFicticio.jpg")
             .build();
 
-    // Creamos personajes ficticios
+    // Creamos personajes ficticios a guardar
     Personaje personajeFicticioA = Personaje.builder()
-            .personajeId(1)
+            .nombre("Personaje Ficticio Uno")
+            .peso(65)
+            .edad(30)
+            .historia("Viene de Rosario, Argentina")
+            .imagen("http://imagenDePersonaje.jpg")
+            .build();
 
+    Personaje personajeFicticioB = Personaje.builder()
+            .nombre("Personaje Ficticio Dos")
+            .peso(65)
+            .edad(30)
+            .historia("Viene de Nogoya, Argentina")
+            .imagen("http://imagenDePersonaje.jpg")
             .build();
 
     // Creamos peliculas ficticia
@@ -33,19 +52,31 @@ class PeliculaRepositoryTest {
             .imagen("http://google.com/fotosdegatitos.jpg")
             .calificacion(5)
             .titulo("Ace Ventura")
-            .genero(generoFicticio)
             .build();
 
     Pelicula peliculaFicticiaConZ = Pelicula.builder()
             .imagen("http://google.com/fotosdegatitos.jpg")
             .calificacion(3)
             .titulo("Zeus")
-
-            .genero(generoFicticio)
             .build();
 
     @BeforeEach
     void savePelis() {
+
+        Genero generoGuardado = generoRepository.save(generoFicticio);
+        Personaje personajeGuardado1 = personajeRepository.save(personajeFicticioA);
+        Personaje personajeGuardado2 = personajeRepository.save(personajeFicticioB);
+
+        List<Personaje> personajesFicticios = new ArrayList<>();
+        personajesFicticios.add(personajeGuardado1);
+        personajesFicticios.add(personajeGuardado2);
+
+        peliculaFicticiaConA.setGenero(generoGuardado);
+        peliculaFicticiaConA.setPersonajes(personajesFicticios);
+        peliculaFicticiaConZ.setPersonajes(personajesFicticios);
+
+        peliculaFicticiaConZ.setGenero(generoGuardado);
+
         peliculaRepository.save(peliculaFicticiaConA);
         peliculaRepository.save(peliculaFicticiaConZ);
     }
@@ -58,29 +89,20 @@ class PeliculaRepositoryTest {
     @Test
     @DisplayName("Buscar Pelicula por titulo")
     void findByTitulo() {
-
-        Assertions.assertEquals(peliculaFicticiaConA.getTitulo(), peliculaRepository.findByTitulo("Ace Ventura"));
+        Pelicula peliculaDB = peliculaRepository.findByTitulo("Ace Ventura").orElseThrow();
+        Assertions.assertEquals(peliculaFicticiaConA.getTitulo(), peliculaDB.getTitulo());
     }
 
     @Test
     @DisplayName("Ordenar Peliculas en orden ASC")
     void findAllByOrderByTituloAsc() {
-
         Assertions.assertEquals(peliculaFicticiaConA.getTitulo(), peliculaRepository.findAllByOrderByTituloAsc().get(0).getTitulo());
     }
 
     @Test
     @DisplayName("Ordenar Peliculas en orden DESC")
     void findAllByOrderByTituloDesc() {
-
         Assertions.assertEquals(peliculaFicticiaConZ.getTitulo(), peliculaRepository.findAllByOrderByTituloDesc().get(0).getTitulo());
     }
 
-    @Test
-    @DisplayName("Eliminar una Pelicula por ID")
-    void deleteOnePeliculaById() {
-
-        peliculaRepository.deleteById(peliculaFicticiaConA.getPeliculaId());
-        Assertions.assertEquals(null, peliculaRepository.findByTitulo(peliculaFicticiaConA.getTitulo()));
-    }
 }

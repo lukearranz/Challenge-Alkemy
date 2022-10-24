@@ -1,16 +1,13 @@
 package com.challenge.alkemy.controller;
 
-import com.challenge.alkemy.entity.dto.jwtDto.JwtRequestDto;
-import com.challenge.alkemy.entity.dto.jwtDto.JwtResponseDto;
-import com.challenge.alkemy.entity.Usuario;
-import com.challenge.alkemy.error.user.UserAndPassDontMatchException;
+import com.challenge.alkemy.entity.dto.authDto.request.AuthRequestDto;
+import com.challenge.alkemy.entity.dto.authDto.request.RegisterRequestDto;
+import com.challenge.alkemy.entity.dto.authDto.response.AuthResponseDto;
 import com.challenge.alkemy.error.user.UsernameAlreadyTakenException;
 import com.challenge.alkemy.security.service.PasswordService;
 import com.challenge.alkemy.security.service.UserService;
 import com.challenge.alkemy.security.utility.JWTUtility;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,44 +17,38 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "/auth")
 @AllArgsConstructor
 public class AuthController {
 
-    private JWTUtility jwtUtility;
-    private UserService userService;
-    private PasswordService passwordService;
-    // make fields final
+    private final JWTUtility jwtUtility;
+    private final UserService userService;
+    private final PasswordService passwordService;
 
-    // Use LOG4J2
-    // Logger for debugging the application
-    private final Logger LOGGER = LoggerFactory.getLogger(PersonajeController.class);
-
-    // Add @valid in the method to validate that the endpoint validates the contrains
     @PostMapping("/login")
-    public ResponseEntity authenticate(@RequestBody JwtRequestDto jwtRequestDto) {
+    public ResponseEntity authenticate(@Valid @RequestBody AuthRequestDto authRequestDto) {
 
-        LOGGER.info("INSIDE AUTHCONTROLLER -----> LOGIN_CONTROLLER");
+        UserDetails userDetails;
         try {
-            String hashedPass = userService.loadUserByUsername(jwtRequestDto.getUsername()).getPassword();
-            // Chequeamos que usuario y contraseña hagan match.
-            // remove comment the name of the method verifyPassword its clear enought.
-            passwordService.verifyPassword(jwtRequestDto.getPassword(), hashedPass);
-            final UserDetails userDetails = userService.loadUserByUsername(jwtRequestDto.getUsername());
-            final String token = jwtUtility.generateToken(userDetails);
-            return new ResponseEntity<>(new JwtResponseDto(token), HttpStatus.ACCEPTED);
-        } catch (UserAndPassDontMatchException usernameNotFoundException) {
-            return new ResponseEntity("USUARIO O CONTRASEÑA INCORRECTOS", HttpStatus.BAD_REQUEST);
+            userDetails = userService.loadUserByUsername(authRequestDto.getUsername());
         } catch (UsernameNotFoundException usernameNotFoundException) {
             return new ResponseEntity("EL USUARIO NO EXISTE", HttpStatus.NOT_FOUND);
         }
+
+        if (!passwordService.verifyPassword(authRequestDto.getPassword(), userDetails.getPassword())) {
+            return new ResponseEntity("USUARIO O CONTRASEÑA INCORRECTOS", HttpStatus.UNAUTHORIZED);
+        }
+        String token = jwtUtility.generateToken(userDetails);
+
+        return new ResponseEntity(AuthResponseDto.builder().jwtToken(token).build(), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody Usuario usuario) {
+    public ResponseEntity register(@Valid @RequestBody RegisterRequestDto usuario) {
 
-        LOGGER.info("INSIDE AUTHCONTROLLER -----> REGISTER_CONTROLLER");
         try {
             userService.createUser(usuario);
             return ResponseEntity.ok("USUARIO CREADO CON EXITO");

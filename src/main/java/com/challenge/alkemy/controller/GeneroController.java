@@ -5,9 +5,7 @@ import com.challenge.alkemy.error.genero.GeneroAlreadyInUseException;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.service.GeneroService;
 import io.swagger.v3.oas.annotations.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,22 +13,17 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@AllArgsConstructor
 public class GeneroController {
 
-    @Autowired
-    private GeneroService generoService;
-
-    // Logger for debugging the application
-    private final Logger LOGGER = LoggerFactory.getLogger(GeneroController.class);
+    private final GeneroService generoService;
 
     @Operation(summary = "Obtener todos los Generos")
     @GetMapping("/genero")
-    public ResponseEntity fetchGenerosList() {
-        LOGGER.info("INSIDE FETCH_GENEROS_LIST  ---->  GENERO_CONTROLLER");
+    public ResponseEntity getAllGeneros() {
+
         try {
-            return ResponseEntity.ok(generoService.fetchGeneros());
-        } catch (GeneroNotFoundException generoNotFoundException) {
-            return new ResponseEntity<>("NO SE ENCONTRARON GENEROS" ,HttpStatus.NOT_FOUND);
+            return ResponseEntity.ok(generoService.getAllGeneros());
         } catch (Exception e) {
             return new ResponseEntity<>("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -39,7 +32,7 @@ public class GeneroController {
     @Operation(summary = "Obtener un genero por Id")
     @GetMapping("/genero/{id}")
     public ResponseEntity fetchGeneroById(@PathVariable("id") Long generoId) {
-        LOGGER.info("INSIDE FETCH_GENERO_BY_ID -----> GENERO_CONTROLLER");
+
         try {
             return ResponseEntity.ok(generoService.findGeneroById(generoId));
         } catch (GeneroNotFoundException generoNotFoundException) {
@@ -51,7 +44,7 @@ public class GeneroController {
     @Operation(summary = "Eliminar un genero por id")
     @DeleteMapping("/genero/{id}")
     public ResponseEntity deleteGeneroById(@PathVariable("id") Long generoId) {
-        LOGGER.info("INSIDE DELETE_GENERO_BY_ID -----> GENERO_CONTROLLER");
+
         try {
             generoService.deleteGeneroById(generoId);
             return ResponseEntity.ok("GENERO ELIMINADO CON EXITO");
@@ -65,7 +58,7 @@ public class GeneroController {
     @Operation(summary = "Crear un nuevo Genero")
     @PostMapping("/genero")
     public ResponseEntity createGenero(@Valid @RequestBody CreateGeneroRequestDto genero) {
-            LOGGER.info("INSIDE CREATE_GENERO  ---->  GENERO_CONTROLLER");
+
             try {
                 return ResponseEntity.ok(generoService.saveGenero(genero));
             } catch (GeneroAlreadyInUseException generoAlreadyInUseException) {

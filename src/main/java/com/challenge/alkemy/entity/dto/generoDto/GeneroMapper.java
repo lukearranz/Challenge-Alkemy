@@ -16,17 +16,14 @@ public class GeneroMapper {
 
     // Este metodo convierte una lista de Generos en una lista de GenerosResponseDto.
     public List<GeneroResponseDto> generosToGenerosResponseDto(List<Genero> generos) {
-        List<GeneroResponseDto> generosDTO = new ArrayList<>();
-        generos.forEach(genero -> {
-            GeneroResponseDto generoAux = GeneroResponseDto.builder()
+        return generos.stream().map(genero ->
+             GeneroResponseDto.builder()
                     .id(genero.getGeneroId())
                     .imagen(genero.getImagen())
                     .nombre(genero.getNombre())
                     .peliculas(genero.getPeliculas().stream().map(pelicula -> mapPeliculaToPeliculaDto(pelicula)).collect(Collectors.toList()))
-                    .build();
-            generosDTO.add(generoAux);
-        });
-        return generosDTO;
+                    .build()
+        ).collect(Collectors.toList());
     }
 
     // Este metodo convierte una Genero en un GeneroResponseDto.
@@ -39,7 +36,6 @@ public class GeneroMapper {
                 .build();
     }
 
-    // Este metodo convierte un GeneroRequest en un GeneroResponseDto.
     public GeneroResponseDto generoRequestToGeneroResponseDto(Genero genero) {
         return GeneroResponseDto.builder()
                 .id(genero.getGeneroId())
@@ -56,7 +52,14 @@ public class GeneroMapper {
                 .build();
     }
 
-    // Este metodo transforma cada Pelicula en PeliculaBuscadaPorParametroResponseDto.
+    /*
+    private List<PeliculaBuscadaPorParametroResponseDto> peliculaResponseDto() {
+
+    }
+
+     */
+
+
     private PeliculaBuscadaPorParametroResponseDto mapPeliculaToPeliculaDto(Pelicula pelicula) {
         return PeliculaBuscadaPorParametroResponseDto.builder()
                 .imagen(pelicula.getImagen())

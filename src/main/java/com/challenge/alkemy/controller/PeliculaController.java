@@ -13,9 +13,7 @@ import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
 import com.challenge.alkemy.service.GeneroService;
 import com.challenge.alkemy.service.PeliculaService;
 import io.swagger.v3.oas.annotations.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,23 +22,29 @@ import javax.validation.Valid;
 import java.util.NoSuchElementException;
 
 @RestController
+@AllArgsConstructor
 public class PeliculaController {
 
-    @Autowired
-    private PeliculaService peliculaService;
+    private final PeliculaService peliculaService;
+    private final GeneroService generoService;
 
-    @Autowired
-    private GeneroService generoService;
+    @Operation(summary = "Obtener todas las peliculas")
+    @GetMapping("/pelicula")
+    public ResponseEntity getAllPeliculas() {
 
-    // Logger for debugging the application
-    private final Logger LOGGER = LoggerFactory.getLogger(PersonajeController.class);
+        try {
+            return ResponseEntity.ok(peliculaService.getAllPeliculas());
+        } catch (Exception e) {
+            return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Operation(summary = "Obtener una pelicula por Id")
     @GetMapping("/pelicula/{id}")
-    public ResponseEntity fetchPeliculaById(@PathVariable("id") Long peliculaId) {
-        LOGGER.info("INSIDE FETCH_PELICULA_BY_ID_PELICULA -----> PELICULA_CONTROLLER");
+    public ResponseEntity getPeliculaById(@PathVariable("id") Long peliculaId) {
+
         try {
-            return ResponseEntity.ok(peliculaService.fetchPeliculaById(peliculaId));
+            return ResponseEntity.ok(peliculaService.getPeliculaById(peliculaId));
         } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO PELICULA CON ESE ID", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -48,23 +52,10 @@ public class PeliculaController {
         }
     }
 
-    @Operation(summary = "Obtener todas las peliculas")
-    @GetMapping("/pelicula")
-    public ResponseEntity fetchPeliculas() {
-        LOGGER.info("INSIDE FETCH_PELICULAS -----> PELICULA_CONTROLLER");
-        try {
-            return ResponseEntity.ok(peliculaService.fetchAllPeliculas());
-        } catch (PeliculaNotFoundException peliculaNotFoundException) {
-            return new ResponseEntity("NO SE ENCONTRARON PELICULAS", HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @Operation(summary = "Crear nueva pelicula")
     @PostMapping("/pelicula")
     public ResponseEntity createPelicula(@Valid @RequestBody CreatePeliculaRequestDto request) throws ChallengeAlkemyException, PersonajeNotFoundException, PeliculaAlreadyExistsException, GeneroNotFoundException {
-        LOGGER.info("INSIDE SAVE_PELICULA -----> PELICULA_CONTROLLER");
+
         try {
             return  ResponseEntity.ok(peliculaService.createPelicula(request));
         } catch (PeliculaAlreadyExistsException peliculaAlreadyExistsException) {
@@ -81,7 +72,7 @@ public class PeliculaController {
     @Operation(summary = "Eliminar una Pelicula por Id")
     @DeleteMapping("/pelicula/{id}")
     public ResponseEntity deletePeliculaById(@PathVariable("id") Long peliculaId) {
-        LOGGER.info("INSIDE DELETE_PELICULA -----> PELICULA_CONTROLLER");
+
         try {
             peliculaService.deletePeliculaById(peliculaId);
             return new  ResponseEntity<>("PELICULA ELIMINADA CON EXITO", HttpStatus.OK);
@@ -92,9 +83,10 @@ public class PeliculaController {
         }
     }
 
-    @Operation(summary = "Editar una Pelicula por Id")
+    @Operation(summary = "Editar una Pelicula por id")
     @PutMapping("/pelicula/{id}")
     public ResponseEntity updatePelicula(@Valid @PathVariable("id") Long peliculaId, @RequestBody UpdatePeliculaRequestDto peliculaRequest) {
+
         try {
             return ResponseEntity.ok(peliculaService.updatePelicula(peliculaId, peliculaRequest));
         } catch (PeliculaNotFoundException peliculaNotFoundException) {
@@ -112,16 +104,12 @@ public class PeliculaController {
 
     @Operation(summary = "Busqueda de peliculas con parametros")
     @GetMapping("/movies")
-    public ResponseEntity fetchMoviesWithParameters(@Valid
-            @RequestParam(required = false, name = "nombre") String nombre,
-            @RequestParam(required = false, name = "genero") Long idGenero,
-            @RequestParam(required = false, name = "orden") String orden
+    public ResponseEntity getMoviesWithParameters(@Valid @RequestParam(required = false, name = "nombre") String nombre, @RequestParam(required = false, name = "genero") Long idGenero, @RequestParam(required = false, name = "orden") String orden
     ) throws PeliculaNotFoundException {
-        LOGGER.info("INSIDE FETCH_MOVIES -----> PELICULAS_CONTROLLER");
 
         if (nombre != null) {
             try {
-                return ResponseEntity.ok(peliculaService.fetchPeliculaByTitulo(nombre));
+                return ResponseEntity.ok(peliculaService.getPeliculaByTitulo(nombre));
             } catch (PeliculaNotFoundException peliculaNotFoundException) {
                 return new ResponseEntity("NO SE ENCONTRO NINGUNA PELICULA CON EL TITULO INGRESADO", HttpStatus.NOT_FOUND);
             } catch (Exception e) {
@@ -131,7 +119,7 @@ public class PeliculaController {
 
         if (orden != null) {
             try {
-                return ResponseEntity.ok(peliculaService.fetchPeliculasByOrder(orden));
+                return ResponseEntity.ok(peliculaService.getPeliculasByOrder(orden));
             } catch (PeliculaNotFoundException peliculaNotFoundException) {
                 return new ResponseEntity("NO SE ENCONTRARON PELICULAS A ORDENAR", HttpStatus.NOT_FOUND);
             } catch (PeliculaBuscadaPorParametroIncorrectoException peliculaBuscadaPorParametroIncorrectoException) {
@@ -143,7 +131,7 @@ public class PeliculaController {
 
         if (idGenero != null) {
             try {
-                return ResponseEntity.ok(peliculaService.fetchPeliculasByGeneroId(idGenero));
+                return ResponseEntity.ok(peliculaService.getPeliculasByGeneroId(idGenero));
             } catch (GeneroNotFoundException generoNotFoundException) {
                 return new ResponseEntity("NO SE ENCONTRO GENERO CON ESE ID", HttpStatus.NOT_FOUND);
             } catch (Exception e) {
@@ -153,7 +141,7 @@ public class PeliculaController {
 
         // Si no se ingreso ningun parametro devolvemos la lista de peliculas completa
         try {
-            return ResponseEntity.ok(peliculaService.fetchPeliculasSinParametros());
+            return ResponseEntity.ok(peliculaService.getPeliculasSinParametros());
         } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity("NO SE ENCONTRARON PELICULAS EN LA DB", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -163,7 +151,7 @@ public class PeliculaController {
 
     @Operation(summary = "Agregar personaje a una pelicula por Id")
     @PostMapping("/movies/{idMovie}/characters/{idCharacter}")
-    ResponseEntity addCharacterToMovie(
+    ResponseEntity addPersonajeToPelicula(
             @PathVariable Long idMovie,
             @PathVariable Long idCharacter
     ) {
@@ -182,12 +170,12 @@ public class PeliculaController {
 
     @Operation(summary = "Eliminar personaje de una pelicula por Id")
     @DeleteMapping("/movies/{idMovie}/characters/{idCharacter}")
-    ResponseEntity deleteCharacterOfMovie(
+    ResponseEntity deletePersonajeDePelicula(
             @PathVariable Long idMovie,
             @PathVariable Long idCharacter
     ) {
         try {
-            return ResponseEntity.ok(peliculaService.eliminarPersonajeDePelicula(idMovie, idCharacter));
+            return ResponseEntity.ok(peliculaService.deletePersonajeDePelicula(idMovie, idCharacter));
         } catch (PeliculaNotFoundException peliculaNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO PELICULA CON ESE ID" ,HttpStatus.NOT_FOUND);
         } catch (PersonajeNotFoundException personajeNotFoundException) {

@@ -17,17 +17,17 @@ import java.util.List;
 public interface PeliculaService {
     PeliculaConDetalleResponseDto createPelicula(CreatePeliculaRequestDto pelicula) throws PersonajeNotFoundException, PeliculaAlreadyExistsException, GeneroNotFoundException;
 
-    PeliculaConDetalleResponseDto fetchPeliculaById(Long peliculaId) throws PeliculaNotFoundException;
+    PeliculaConDetalleResponseDto getPeliculaById(Long peliculaId) throws PeliculaNotFoundException;
 
-    PeliculaBuscadaPorParametroResponseDto fetchPeliculaByTitulo(String titulo) throws PeliculaNotFoundException;
+    PeliculaBuscadaPorParametroResponseDto getPeliculaByTitulo(String titulo) throws PeliculaNotFoundException;
 
-    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasSinParametros() throws PeliculaNotFoundException;
+    List<PeliculaBuscadaPorParametroResponseDto> getPeliculasSinParametros() throws PeliculaNotFoundException;
 
-    List<PeliculaConDetalleResponseDto> fetchAllPeliculas() throws PeliculaNotFoundException;
+    List<PeliculaConDetalleResponseDto> getAllPeliculas() throws PeliculaNotFoundException;
 
-    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByOrder(String orden) throws PeliculaNotFoundException, PeliculaBuscadaPorParametroIncorrectoException;
+    List<PeliculaBuscadaPorParametroResponseDto> getPeliculasByOrder(String orden) throws PeliculaNotFoundException, PeliculaBuscadaPorParametroIncorrectoException;
 
-    List<PeliculaBuscadaPorParametroResponseDto> fetchPeliculasByGeneroId(Long generoId) throws GeneroNotFoundException;
+    List<PeliculaBuscadaPorParametroResponseDto> getPeliculasByGeneroId(Long generoId) throws GeneroNotFoundException;
 
     void deletePeliculaById(Long peliculaId) throws Exception;
 
@@ -35,5 +35,5 @@ public interface PeliculaService {
 
     PeliculaConDetalleResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFoundException, PersonajeNotFoundException, PersonajeYaEnUsoException;
 
-    PeliculaConDetalleResponseDto eliminarPersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFoundException, PersonajeNotFoundInPeliculaException;
+    PeliculaConDetalleResponseDto deletePersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFoundException, PersonajeNotFoundInPeliculaException;
 }

@@ -17,22 +17,21 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class GeneroServiceImp implements GeneroService{
+public class GeneroServiceImp implements GeneroService {
 
-    private GeneroRepository generoRepository;
-    private GeneroMapper generoMapper;
+    private final GeneroRepository generoRepository;
+    private final GeneroMapper generoMapper;
 
     @Override
-    public List<GeneroResponseDto> fetchGeneros() throws GeneroNotFoundException {
+    public List<GeneroResponseDto> getAllGeneros() {
+
         List<Genero> generosDB = generoRepository.findAll();
-        if (generosDB.isEmpty()) {
-            throw new GeneroNotFoundException("NO SE ENCONTRARON GENEROS");
-        }
         return generoMapper.generosToGenerosResponseDto(generosDB);
     }
 
     @Override
     public CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto generoRequest) throws GeneroAlreadyInUseException {
+
         generoRepository.findGeneroByNombre(generoRequest.getNombre()).orElseThrow(()-> new GeneroAlreadyInUseException("EL GENERO QUE DESEA CREAR YA EXISTE"));
         Genero generoToSave = Genero.builder()
                 .nombre(generoRequest.getNombre())
@@ -45,13 +44,14 @@ public class GeneroServiceImp implements GeneroService{
 
     @Override
     public GeneroResponseDto findGeneroById(Long generoId) throws GeneroNotFoundException {
+
         Genero generoDB = generoRepository.findById(generoId).orElseThrow(()-> new GeneroNotFoundException("NO SE ENCONTRO GENERO CON ESE ID"));
         return generoMapper.generoToGeneroResponseDto(generoDB);
     }
 
     @Override
     public void deleteGeneroById(Long generoId) throws GeneroNotFoundException {
-        // Primero chequeamos que el Genero que queremos eliminar existe.
+
         generoRepository.findById(generoId).orElseThrow(()-> new GeneroNotFoundException("NO SE ENCONTRO GENERO A ELIMINAR CON ESE ID"));
         generoRepository.deleteById(generoId);
     }
