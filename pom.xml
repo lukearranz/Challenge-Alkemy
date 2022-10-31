@@ -12,7 +12,7 @@
 	<artifactId>alkemy</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ChallengeAlkemy</name>
-	<description>Challenge aceleracion alkemy -  API Rest</description>
+	<description>Challenge aceleracion Alkemy - API Rest</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

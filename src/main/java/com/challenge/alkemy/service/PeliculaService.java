@@ -33,7 +33,7 @@ public interface PeliculaService {
 
     PeliculaConDetalleResponseDto updatePelicula(Long peliculaId, UpdatePeliculaRequestDto peliculaRequest) throws PeliculaNotFoundException, PersonajeNotFoundException, PeliculaAlreadyExistsException;
 
-    PeliculaConDetalleResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFoundException, PersonajeNotFoundException, PersonajeYaEnUsoException;
+    PeliculaConDetalleResponseDto addPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFoundException, PersonajeNotFoundException, PersonajeYaEnUsoException;
 
     PeliculaConDetalleResponseDto deletePersonajeDePelicula(Long idMovie, Long idCharacter) throws PersonajeNotFoundException, PeliculaNotFoundException, PersonajeNotFoundInPeliculaException;
 }

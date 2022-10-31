@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -32,7 +33,10 @@ public class GeneroServiceImp implements GeneroService {
     @Override
     public CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto generoRequest) throws GeneroAlreadyInUseException {
 
-        generoRepository.findGeneroByNombre(generoRequest.getNombre()).orElseThrow(()-> new GeneroAlreadyInUseException("EL GENERO QUE DESEA CREAR YA EXISTE"));
+        Optional<Genero> generoDB = generoRepository.findGeneroByNombre(generoRequest.getNombre());
+        if (generoDB.isPresent()) {
+            throw new GeneroAlreadyInUseException("EL GENERO QUE DESEA CREAR YA EXISTE");
+        }
         Genero generoToSave = Genero.builder()
                 .nombre(generoRequest.getNombre())
                 .imagen(generoRequest.getImagen())
@@ -43,7 +47,7 @@ public class GeneroServiceImp implements GeneroService {
     }
 
     @Override
-    public GeneroResponseDto findGeneroById(Long generoId) throws GeneroNotFoundException {
+    public GeneroResponseDto getGeneroById(Long generoId) throws GeneroNotFoundException {
 
         Genero generoDB = generoRepository.findById(generoId).orElseThrow(()-> new GeneroNotFoundException("NO SE ENCONTRO GENERO CON ESE ID"));
         return generoMapper.generoToGeneroResponseDto(generoDB);

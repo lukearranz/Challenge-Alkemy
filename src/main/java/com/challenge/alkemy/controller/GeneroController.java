@@ -31,10 +31,10 @@ public class GeneroController {
 
     @Operation(summary = "Obtener un genero por Id")
     @GetMapping("/genero/{id}")
-    public ResponseEntity fetchGeneroById(@PathVariable("id") Long generoId) {
+    public ResponseEntity getGeneroById(@PathVariable("id") Long generoId) {
 
         try {
-            return ResponseEntity.ok(generoService.findGeneroById(generoId));
+            return ResponseEntity.ok(generoService.getGeneroById(generoId));
         } catch (GeneroNotFoundException generoNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO GENERO CON ESE ID", HttpStatus.NOT_FOUND);
         } catch (Exception e) {

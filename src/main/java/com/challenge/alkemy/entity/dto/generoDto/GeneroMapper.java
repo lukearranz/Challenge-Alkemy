@@ -7,7 +7,6 @@ import com.challenge.alkemy.entity.dto.generoDto.response.GeneroResponseDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,14 +50,6 @@ public class GeneroMapper {
                 .imagen(genero.getImagen())
                 .build();
     }
-
-    /*
-    private List<PeliculaBuscadaPorParametroResponseDto> peliculaResponseDto() {
-
-    }
-
-     */
-
 
     private PeliculaBuscadaPorParametroResponseDto mapPeliculaToPeliculaDto(Pelicula pelicula) {
         return PeliculaBuscadaPorParametroResponseDto.builder()

@@ -117,7 +117,7 @@ public class PeliculaServiceImp implements PeliculaService{
     }
 
     @Override
-    public PeliculaConDetalleResponseDto agregarPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFoundException, PersonajeNotFoundException, PersonajeYaEnUsoException {
+    public PeliculaConDetalleResponseDto addPersonajeToPelicula(Long idMovie, Long idCharacter) throws PeliculaNotFoundException, PersonajeNotFoundException, PersonajeYaEnUsoException {
 
         Personaje personajeToAdd = personajeRepository.findById(idCharacter).orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO PERSONAJE CON ESE ID"));
         Pelicula peliculaDB = peliculaRepository.findById(idMovie).orElseThrow(()-> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID"));

@@ -14,7 +14,7 @@ public interface GeneroService {
 
     CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto genero) throws GeneroAlreadyInUseException, PeliculaNotFoundException;
 
-    GeneroResponseDto findGeneroById(Long generoId) throws GeneroNotFoundException;
+    GeneroResponseDto getGeneroById(Long generoId) throws GeneroNotFoundException;
 
     void deleteGeneroById(Long generoId) throws GeneroNotFoundException;
 }

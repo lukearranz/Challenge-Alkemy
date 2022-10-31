@@ -156,7 +156,7 @@ public class PeliculaController {
             @PathVariable Long idCharacter
     ) {
         try {
-            return ResponseEntity.ok(peliculaService.agregarPersonajeToPelicula(idMovie, idCharacter));
+            return ResponseEntity.ok(peliculaService.addPersonajeToPelicula(idMovie, idCharacter));
         } catch (PersonajeNotFoundException personajeNotFoundException) {
             return new ResponseEntity<>("NO SE ENCONTRO UN PERSONJE CON ESE ID", HttpStatus.NOT_FOUND);
         } catch (PeliculaNotFoundException peliculaNotFoundException) {
