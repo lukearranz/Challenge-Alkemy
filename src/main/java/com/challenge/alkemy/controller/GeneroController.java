@@ -63,8 +63,10 @@ public class GeneroController {
                 return ResponseEntity.ok(generoService.saveGenero(genero));
             } catch (GeneroAlreadyInUseException generoAlreadyInUseException) {
                 return new ResponseEntity("EL GENERO INDICADO YA SE ENCUENTRA EN USO", HttpStatus.BAD_REQUEST);
+            } catch (GeneroNotFoundException generoNotFoundException) {
+                return new ResponseEntity("EL GENERO A CREAR DEBE CONTENER NOMBRE", HttpStatus.BAD_REQUEST);
             } catch (Exception e) {
-                return new ResponseEntity<>("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity("ALGO SALIO MAL", HttpStatus.INTERNAL_SERVER_ERROR);
             }
     }
 }

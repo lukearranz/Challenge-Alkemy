@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,9 +32,13 @@ public class GeneroServiceImp implements GeneroService {
     }
 
     @Override
-    public CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto generoRequest) throws GeneroAlreadyInUseException {
+    public CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto generoRequest) throws GeneroAlreadyInUseException, GeneroNotFoundException {
 
         Optional<Genero> generoDB = generoRepository.findGeneroByNombre(generoRequest.getNombre());
+        if (generoRequest.getNombre().isEmpty()) {
+            throw new GeneroNotFoundException("EL GENERO DEBE CONTENER NOMBRE");
+        }
+
         if (generoDB.isPresent()) {
             throw new GeneroAlreadyInUseException("EL GENERO QUE DESEA CREAR YA EXISTE");
         }

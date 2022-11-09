@@ -15,11 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class ChallengeAlkemyApplication {
 
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
-
 	@Autowired
 	private EmailSenderService mailService;
 

@@ -12,7 +12,7 @@ import java.util.List;
 public interface GeneroService {
     List<GeneroResponseDto> getAllGeneros() throws GeneroNotFoundException;
 
-    CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto genero) throws GeneroAlreadyInUseException, PeliculaNotFoundException;
+    CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto genero) throws GeneroAlreadyInUseException, PeliculaNotFoundException, GeneroNotFoundException;
 
     GeneroResponseDto getGeneroById(Long generoId) throws GeneroNotFoundException;
 
