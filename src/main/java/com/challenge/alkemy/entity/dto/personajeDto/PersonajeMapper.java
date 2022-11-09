@@ -25,31 +25,25 @@ public class PersonajeMapper {
 
     public List<PersonajeBuscadoPorParametroResponseDto> personajeToPersonajeBuscadoPorParametroResponseDto(List<Personaje> personajes) {
 
-        List<PersonajeBuscadoPorParametroResponseDto> personajesMappeados = new ArrayList<>();
-        for (Personaje personaje : personajes) {
-            personajesMappeados.add(PersonajeBuscadoPorParametroResponseDto.builder()
-                    .nombre(personaje.getNombre())
-                    .imagen(personaje.getImagen())
-                    .build());
-        }
-        return personajesMappeados;
+        return personajes.stream().map(personaje -> PersonajeBuscadoPorParametroResponseDto.builder()
+                .nombre(personaje.getNombre())
+                .imagen(personaje.getImagen())
+                .build()).collect(Collectors.toList());
     }
 
     public List<PersonajeConDetalleResponseDto> personajeToPersonajeConDetalleResponseDto(List<Personaje> personajes) {
 
-        List<PersonajeConDetalleResponseDto> personajesMappeados = new ArrayList<>();
-        for (Personaje personaje : personajes) {
-            personajesMappeados.add(PersonajeConDetalleResponseDto.builder()
-                    .id(personaje.getPersonajeId())
-                    .nombre(personaje.getNombre())
-                    .imagen(personaje.getImagen())
-                    .edad(personaje.getEdad())
-                    .peso(personaje.getPeso())
-                    .historia(personaje.getHistoria())
-                    .peliculas(personaje.getPeliculas().stream().map(pelicula -> mapPeliculaToPeliculaDto(pelicula)).collect(Collectors.toList()))
-                    .build());
-        }
-        return personajesMappeados;
+        return personajes.stream().map(personaje -> PersonajeConDetalleResponseDto.builder()
+                .id(personaje.getPersonajeId())
+                .nombre(personaje.getNombre())
+                .imagen(personaje.getImagen())
+                .edad(personaje.getEdad())
+                .peso(personaje.getPeso())
+                .historia(personaje.getHistoria())
+                .peliculas(personaje.getPeliculas().stream()
+                        .map(this::mapPeliculaToPeliculaDto)
+                        .collect(Collectors.toList()))
+                .build()).collect(Collectors.toList());
     }
 
     public PersonajeConDetalleResponseDto personajeToPersonajeConDetalleResponseDto(Personaje personaje) {

@@ -2,7 +2,6 @@ package com.challenge.alkemy.controller;
 
 import com.challenge.alkemy.entity.dto.peliculaDto.request.CreatePeliculaRequestDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.request.UpdatePeliculaRequestDto;
-import com.challenge.alkemy.error.ChallengeAlkemyException;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
 import com.challenge.alkemy.error.pelicula.PeliculaBuscadaPorParametroIncorrectoException;
@@ -54,7 +53,7 @@ public class PeliculaController {
 
     @Operation(summary = "Crear nueva pelicula")
     @PostMapping("/pelicula")
-    public ResponseEntity createPelicula(@Valid @RequestBody CreatePeliculaRequestDto request) throws ChallengeAlkemyException, PersonajeNotFoundException, PeliculaAlreadyExistsException, GeneroNotFoundException {
+    public ResponseEntity createPelicula(@Valid @RequestBody CreatePeliculaRequestDto request) throws PersonajeNotFoundException, PeliculaAlreadyExistsException, GeneroNotFoundException {
 
         try {
             return  ResponseEntity.ok(peliculaService.createPelicula(request));

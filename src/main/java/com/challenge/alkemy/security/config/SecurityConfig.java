@@ -2,6 +2,7 @@ package com.challenge.alkemy.security.config;
 
 import com.challenge.alkemy.security.filter.JwtFilter;
 import com.challenge.alkemy.security.service.UserServiceImp;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,14 +15,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@AllArgsConstructor
 @EnableWebSecurity // Permite a Spring aplicar esta configuracion a la configuracion de seguridad global.
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserServiceImp userServiceImp;
-
-    @Autowired
-    private JwtFilter jwtFilter;
+    private final UserServiceImp userServiceImp;
+    private final JwtFilter jwtFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

@@ -24,13 +24,32 @@ public class PeliculaMapper {
                         .nombre(pelicula.getGenero().getNombre())
                         .imagen(pelicula.getGenero().getImagen())
                         .id(pelicula.getGenero().getGeneroId())
-                        .build()
-                )
+                        .build())
                 .id(pelicula.getPeliculaId())
                 .titulo(pelicula.getTitulo())
                 .imagen(pelicula.getImagen())
-                .personajes(pelicula.getPersonajes().stream().map(personaje -> mapPersonajeToPersonajeDto(personaje)).collect(Collectors.toList()))
+                .personajes(pelicula.getPersonajes().stream()
+                        .map(personaje -> mapPersonajeToPersonajeDto(personaje))
+                        .collect(Collectors.toList()))
                 .build();
+    }
+
+    public PeliculaBuscadaPorParametroResponseDto peliculaToPeliculaBuscadaPorTituloDtoResponse(Pelicula pelicula) {
+
+        return PeliculaBuscadaPorParametroResponseDto.builder()
+                .fechaEstreno(pelicula.getFechaEstreno())
+                .titulo(pelicula.getTitulo())
+                .imagen(pelicula.getImagen())
+                .build();
+    }
+
+    public List<PeliculaBuscadaPorParametroResponseDto> peliculaToPeliculaBuscadaPorParametroResponseDto(List<Pelicula> peliculas) {
+
+        return peliculas.stream().map(pelicula -> PeliculaBuscadaPorParametroResponseDto.builder()
+                .titulo(pelicula.getTitulo())
+                .fechaEstreno(pelicula.getFechaEstreno())
+                .imagen(pelicula.getImagen())
+                .build()).collect(Collectors.toList());
     }
 
     // Este metodo lo usamos para mapear los personajes del metodo 'peliculaToCreatePeliculaResponseDto'
@@ -43,34 +62,5 @@ public class PeliculaMapper {
                 .peso(personaje.getPeso())
                 .historia(personaje.getHistoria())
                 .build();
-    }
-
-    public PeliculaBuscadaPorParametroResponseDto peliculaToPeliculaBuscadaPorTituloDtoResponse(Pelicula pelicula) {
-
-        PeliculaBuscadaPorParametroResponseDto peliculaEncontrada = new PeliculaBuscadaPorParametroResponseDto();
-
-        peliculaEncontrada.setFechaEstreno(pelicula.getFechaEstreno());
-        peliculaEncontrada.setTitulo(pelicula.getTitulo());
-        peliculaEncontrada.setImagen(pelicula.getImagen());
-
-        return peliculaEncontrada;
-    }
-
-    public List<PeliculaBuscadaPorParametroResponseDto> peliculaToPeliculaBuscadaPorParametroResponseDto(List<Pelicula> peliculas) {
-
-        List<PeliculaBuscadaPorParametroResponseDto> peliculasDTO = new ArrayList<>();
-
-        peliculas.forEach(source -> {
-            PeliculaBuscadaPorParametroResponseDto peliculaAux =
-            PeliculaBuscadaPorParametroResponseDto.builder()
-                    .titulo(source.getTitulo())
-                    .fechaEstreno(source.getFechaEstreno())
-                    .imagen(source.getImagen())
-                    .build();
-
-            peliculasDTO.add(peliculaAux);
-        });
-
-        return peliculasDTO;
     }
 }

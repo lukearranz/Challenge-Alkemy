@@ -2,6 +2,7 @@ package com.challenge.alkemy.security.filter;
 
 import com.challenge.alkemy.security.service.UserServiceImp;
 import com.challenge.alkemy.security.utility.JWTUtility;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,13 +19,11 @@ import java.io.IOException;
 
 
 @Component
+@AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JWTUtility jwtUtility;
-
-    @Autowired
-    private UserServiceImp userServiceImp;
+    private final JWTUtility jwtUtility;
+    private final UserServiceImp userServiceImp;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -44,8 +43,8 @@ public class JwtFilter extends OncePerRequestFilter {
             UserDetails userDetails = userServiceImp.loadUserByUsername(userName);
 
             if (jwtUtility.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 

@@ -9,12 +9,11 @@ import com.challenge.alkemy.error.genero.GeneroAlreadyInUseException;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.repository.GeneroRepository;
 import lombok.AllArgsConstructor;
-
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 
 @Service
@@ -34,21 +33,21 @@ public class GeneroServiceImp implements GeneroService {
     @Override
     public CreateGeneroResponseDto saveGenero(CreateGeneroRequestDto generoRequest) throws GeneroAlreadyInUseException, GeneroNotFoundException {
 
-        Optional<Genero> generoDB = generoRepository.findGeneroByNombre(generoRequest.getNombre());
         if (generoRequest.getNombre().isEmpty()) {
             throw new GeneroNotFoundException("EL GENERO DEBE CONTENER NOMBRE");
         }
+        Optional<Genero> generoDB = generoRepository.findGeneroByNombre(generoRequest.getNombre());
 
         if (generoDB.isPresent()) {
             throw new GeneroAlreadyInUseException("EL GENERO QUE DESEA CREAR YA EXISTE");
         }
+
         Genero generoToSave = Genero.builder()
                 .nombre(generoRequest.getNombre())
                 .imagen(generoRequest.getImagen())
                 .build();
 
-        Genero generoGuardado = generoRepository.save(generoToSave);
-        return generoMapper.generoToCreateGeneroResponseDto(generoGuardado);
+        return generoMapper.generoToCreateGeneroResponseDto(generoRepository.save(generoToSave));
     }
 
     @Override

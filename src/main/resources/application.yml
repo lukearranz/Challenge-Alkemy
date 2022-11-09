@@ -1,5 +1,15 @@
+# Server Config
 server:
   port: '8080'
+
+---
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
+---
 
 # Selected Profile
 spring:
@@ -45,5 +55,25 @@ management:
         include: "*"
         exclude: "env, beans"
 
+---
+
+# Envio de mails
+spring:
+  mail:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: 'true'
+          auth: 'true'
+    host: smtp.gmail.com
+    username: polloarranz@gmail.com
+    password: uoqriaxzyfxvdowf
+    port: '587'
+
+# Swagger config
+basePath: /swagger-ui/index.html
+
+# JWT Config
 jwt:
   secret: secretkey123
