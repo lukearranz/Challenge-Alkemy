@@ -3,7 +3,6 @@ package com.challenge.alkemy.security.config;
 import com.challenge.alkemy.security.filter.JwtFilter;
 import com.challenge.alkemy.security.service.UserServiceImp;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,19 +32,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/auth/login", "/auth/register").permitAll()
-                .antMatchers("/v2/api-docs",
-                        "/configuration/ui",
-                        "/swagger-resources/**",
-                        "/configuration/security",
-                        "/swagger-ui/**",
-                        "/webjars/**").permitAll()
+                .antMatchers("/auth/login", "/auth/register", "/v3/api-docs/**", "/swagger-ui/**", "/javainuse-openapi/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
