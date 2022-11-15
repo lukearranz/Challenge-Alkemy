@@ -1,12 +1,23 @@
-# Alkemy Challenge - RestApi
+# ✨ Alkemy Challenge - RestApi ✨
 
-Technical Test Spring Boot.
+Api Rest for practice purposes
+
+## Java + SpringBoot
+
+- Maven
+- Hibernate
+- MySql
+- SpringSecurity
+- JWT for security
+- Lombok
+- JUnit
+- Swagger & OpenApi 3.0
 
 ## Installation
 
-Docker:
+Maven:
 ```bash
-mvn clean install && docker-compose up
+mvn clean install
 ```
 
 ## Usage
@@ -29,6 +40,6 @@ User:   ADMINISTRADOR - ADMINISTRADOR
 
 ## Author
 
-https://www.lucasarranz.com.ar/
-https://www.linkedin.com/lucas-arranz-garcia
+- https://www.lucasarranz.com.ar/
+- https://www.linkedin.com/in/lucas-arranz-garcia/
 
