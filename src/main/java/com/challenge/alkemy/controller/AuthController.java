@@ -3,7 +3,6 @@ package com.challenge.alkemy.controller;
 import com.challenge.alkemy.entity.dto.authDto.request.AuthRequestDto;
 import com.challenge.alkemy.entity.dto.authDto.request.RegisterRequestDto;
 import com.challenge.alkemy.entity.dto.authDto.response.AuthResponseDto;
-import com.challenge.alkemy.entity.dto.generoDto.response.GeneroResponseDto;
 import com.challenge.alkemy.error.user.UsernameAlreadyTakenException;
 import com.challenge.alkemy.security.service.PasswordService;
 import com.challenge.alkemy.security.service.UserService;

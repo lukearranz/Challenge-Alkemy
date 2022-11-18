@@ -1,13 +1,13 @@
 package com.challenge.alkemy.service;
 
 import com.challenge.alkemy.entity.Genero;
+import com.challenge.alkemy.entity.Pelicula;
+import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.entity.dto.peliculaDto.PeliculaMapper;
 import com.challenge.alkemy.entity.dto.peliculaDto.request.CreatePeliculaRequestDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.request.UpdatePeliculaRequestDto;
-import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaConDetalleResponseDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
-import com.challenge.alkemy.entity.Pelicula;
-import com.challenge.alkemy.entity.Personaje;
+import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaConDetalleResponseDto;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
 import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
 import com.challenge.alkemy.error.pelicula.PeliculaBuscadaPorParametroIncorrectoException;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

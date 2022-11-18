@@ -1,24 +1,28 @@
 package com.challenge.alkemy.repository;
 
 import com.challenge.alkemy.entity.Genero;
-import com.challenge.alkemy.entity.Pelicula;
-import lombok.AllArgsConstructor;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
 
 @SpringBootTest
 class GeneroRepositoryTest {
+
+    private static final String NOMBRE = "Terror";
+    private static final String IMAGEN = "https://lcsacsacsac";
 
     @Autowired
     private GeneroRepository generoRepository;
 
     // Creamos un genero ficticio.
     Genero generoFicticio = Genero.builder()
-            .nombre("Terror")
-            .imagen("imagenFicticiaDeGenero")
+            .nombre(NOMBRE)
+            .imagen(IMAGEN)
             .build();
 
     @BeforeEach
@@ -27,14 +31,22 @@ class GeneroRepositoryTest {
     }
 
     @AfterEach
-    void tearDown() {
-        generoRepository.deleteAll();
+    void tearDown() { generoRepository.deleteAll(); }
+
+    @Test
+    void findGeneroByNombre() {
+
+        Optional<Genero> genero = generoRepository.findGeneroByNombre(NOMBRE).stream().findFirst();
+        Assertions.assertTrue(genero.isPresent());
+        Assertions.assertEquals(genero.get().getNombre(), NOMBRE);
+        Assertions.assertEquals(genero.get().getImagen(), IMAGEN);
     }
 
     @Test
-    @DisplayName("Buscar Genero por nombre")
-    void findGeneroByNombre() {
-        // Guardamos en genero en la DB.
-        Assertions.assertEquals("Terror", generoRepository.findGeneroByNombre("Terror").get().getNombre());
+    void findGeneroByNombreThatNotExists() {
+
+        Optional<Genero> genero = generoRepository.findGeneroByNombre("Fruta");
+        Assertions.assertFalse(genero.isPresent());
+
     }
 }

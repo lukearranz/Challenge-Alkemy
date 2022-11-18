@@ -41,14 +41,14 @@ class PersonajeRepositoryTest {
         personajeRepository.deleteAll();
     }
 
-    @Test
+
     @DisplayName("Verificar si un Personaje puede ser guardado")
     public void checkIfPersonaCanBeSaved() {
         Personaje savedPersonaje = personajeRepository.save(personajeFicticio);
         Assertions.assertEquals(personajeFicticio, savedPersonaje);
     }
 
-    @Test
+
     @DisplayName("Buscar Personaje por nombre")
     void findByNombre() {
 
@@ -58,7 +58,7 @@ class PersonajeRepositoryTest {
         //Assertions.assertEquals(personajeGuardadoEnDB.getPersonajeId(), personajeDB.getPersonajeId());
     }
 
-    @Test
+
     @DisplayName("Buscar Personaje por edad")
     void findByEdad() {
         personajeRepository.save(personajeFicticio);
@@ -67,7 +67,7 @@ class PersonajeRepositoryTest {
         //Assertions.assertEquals(30, personajesDB.get(0).getEdad());
     }
 
-    @Test
+
     @DisplayName("Buscar Personaje por peso")
     void findByPeso() {
         personajeRepository.save(personajeFicticio2);

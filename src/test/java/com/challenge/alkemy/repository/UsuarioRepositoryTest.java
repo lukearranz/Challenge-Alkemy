@@ -23,7 +23,7 @@ class UsuarioRepositoryTest {
         usuarioRepository.deleteAll();
     }
 
-    @Test
+
     @DisplayName("Verificar si podemos buscar un Usuario por nombre")
     void findUsuarioByUsername() {
 

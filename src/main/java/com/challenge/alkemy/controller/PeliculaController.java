@@ -113,8 +113,7 @@ public class PeliculaController {
             @ApiResponse(responseCode = "403", description = "User not authenticated",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Pelicula Not Found",
-                    content = @Content)
-    })
+                    content = @Content)})
     public ResponseEntity deletePeliculaById(@PathVariable("id") Long peliculaId) {
 
         try {
@@ -138,8 +137,7 @@ public class PeliculaController {
             @ApiResponse(responseCode = "404", description = "One of the parameters not found",
                     content = @Content),
             @ApiResponse(responseCode = "400", description = "Pelicula already exists",
-                    content = @Content)
-    })
+                    content = @Content)})
     public ResponseEntity updatePelicula(@Valid @PathVariable("id") Long peliculaId, @RequestBody UpdatePeliculaRequestDto peliculaRequest) {
 
         try {

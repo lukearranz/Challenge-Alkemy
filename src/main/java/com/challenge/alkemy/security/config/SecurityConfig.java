@@ -34,10 +34,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
+        http
+                .csrf().disable()
+                .headers().frameOptions().disable()
+                .and()
                 .authorizeRequests()
-                .antMatchers("/auth/login", "/auth/register", "/v3/api-docs/**", "/swagger-ui/**", "/javainuse-openapi/**").permitAll()
+                .antMatchers("/auth/login", "/auth/register", "/v3/api-docs/**", "/swagger-ui/**", "/javainuse-openapi/**", "/h2-console/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

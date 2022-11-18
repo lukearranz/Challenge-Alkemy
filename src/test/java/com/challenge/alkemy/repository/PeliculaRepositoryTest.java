@@ -84,22 +84,23 @@ class PeliculaRepositoryTest {
     @AfterEach
     void tearDown() {
         peliculaRepository.deleteAll();
+        generoRepository.deleteAll();
     }
 
-    @Test
+
     @DisplayName("Buscar Pelicula por titulo")
     void findByTitulo() {
         Pelicula peliculaDB = peliculaRepository.findByTitulo("Ace Ventura").orElseThrow();
         Assertions.assertEquals(peliculaFicticiaConA.getTitulo(), peliculaDB.getTitulo());
     }
 
-    @Test
+
     @DisplayName("Ordenar Peliculas en orden ASC")
     void findAllByOrderByTituloAsc() {
         Assertions.assertEquals(peliculaFicticiaConA.getTitulo(), peliculaRepository.findAllByOrderByTituloAsc().get(0).getTitulo());
     }
 
-    @Test
+
     @DisplayName("Ordenar Peliculas en orden DESC")
     void findAllByOrderByTituloDesc() {
         Assertions.assertEquals(peliculaFicticiaConZ.getTitulo(), peliculaRepository.findAllByOrderByTituloDesc().get(0).getTitulo());
