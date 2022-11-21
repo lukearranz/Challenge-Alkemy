@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 
 @Service
@@ -36,7 +35,7 @@ public class GeneroServiceImp implements GeneroService {
         if (generoRequest.getNombre().isEmpty()) {
             throw new GeneroNotFoundException("EL GENERO DEBE CONTENER NOMBRE");
         }
-        Optional<Genero> generoDB = generoRepository.findGeneroByNombre(generoRequest.getNombre());
+        Optional<Genero> generoDB = generoRepository.findGeneroByNombreContainingIgnoreCase(generoRequest.getNombre());
 
         if (generoDB.isPresent()) {
             throw new GeneroAlreadyInUseException("EL GENERO QUE DESEA CREAR YA EXISTE");

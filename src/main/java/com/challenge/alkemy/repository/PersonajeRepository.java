@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface PersonajeRepository extends JpaRepository<Personaje, Long> {
 
-    Optional<Personaje> findByNombre(String nombre);
+    Optional<Personaje> findByNombreContainingIgnoreCase(String nombre);
 
     Optional<List<Personaje>> findByEdad(int edad);
 

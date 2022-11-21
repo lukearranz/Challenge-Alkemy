@@ -83,7 +83,7 @@ public class PeliculaServiceImp implements PeliculaService{
     @Override
     public PeliculaConDetalleResponseDto updatePelicula(@Valid Long peliculaId, UpdatePeliculaRequestDto peliculaRequest) throws PeliculaNotFoundException, PersonajeNotFoundException, PeliculaAlreadyExistsException {
 
-        if (peliculaRepository.findByTitulo(peliculaRequest.getTitulo()).isPresent()) {
+        if (peliculaRepository.findByTituloContainingIgnoreCase(peliculaRequest.getTitulo()).isPresent()) {
             throw new PeliculaAlreadyExistsException("EL TITULO SOLICITADO YA EXISTE");
         }
         peliculaRepository.findById(peliculaId).orElseThrow(()-> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID"));
@@ -158,7 +158,7 @@ public class PeliculaServiceImp implements PeliculaService{
     @Override
     public PeliculaConDetalleResponseDto createPelicula(@Valid CreatePeliculaRequestDto peliculaRequest) throws PeliculaAlreadyExistsException, PersonajeNotFoundException {
 
-        if (peliculaRepository.findByTitulo(peliculaRequest.getTitulo()).isPresent()) {
+        if (peliculaRepository.findByTituloContainingIgnoreCase(peliculaRequest.getTitulo()).isPresent()) {
             throw new PeliculaAlreadyExistsException("LA PELICULA YA EXISTE");
         }
         List<Optional<Personaje>> listaDePersonajes = peliculaRequest.getPersonajesId().stream()
@@ -202,7 +202,7 @@ public class PeliculaServiceImp implements PeliculaService{
 
     @Override
     public PeliculaBuscadaPorParametroResponseDto getPeliculaByTitulo(String titulo) throws PeliculaNotFoundException {
-        Pelicula pelicula = peliculaRepository.findByTitulo(titulo).orElseThrow(
+        Pelicula pelicula = peliculaRepository.findByTituloContainingIgnoreCase(titulo).orElseThrow(
                 () -> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE TITULO")
         );
         return peliculaMapper.peliculaToPeliculaBuscadaPorTituloDtoResponse(pelicula);

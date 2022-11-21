@@ -20,7 +20,7 @@ public class CreatePeliculaRequestDto {
     @JsonFormat(pattern="dd-MM-yyyy")
     private Date fechaEstreno;
     @NotBlank
-    private String imagen; // ToDo Deberia ser de tipo URL
+    private String imagen;
     @NotNull( message = "Calification cannot be null")
     @Min(value = 1 , message = "Calification should be between 1 and 5")
     @Max(value = 1 , message = "Calification should be between 1 and 5")

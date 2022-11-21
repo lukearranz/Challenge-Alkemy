@@ -34,7 +34,7 @@ public class PersonajeServiceImp implements PersonajeService {
     @Override
     public PersonajeConDetalleResponseDto savePersonaje(CreateOrUpdatePersonajeRequestDto personajeRequest) throws PersonajeYaEnUsoException {
 
-        if (personajeRepository.findByNombre(personajeRequest.getNombre()).isPresent()) {
+        if (personajeRepository.findByNombreContainingIgnoreCase(personajeRequest.getNombre()).isPresent()) {
             throw new PersonajeYaEnUsoException("EL PERSONAJE INDICADO YA EXISTE");
         }
         Personaje personajeToSave = Personaje.builder()
@@ -103,7 +103,7 @@ public class PersonajeServiceImp implements PersonajeService {
     @Override
     public PersonajeBuscadoPorParametroResponseDto getPersonajeByNombre(String nombre) throws PersonajeNotFoundException {
 
-        Personaje personajeEncontrado = personajeRepository.findByNombre(nombre)
+        Personaje personajeEncontrado = personajeRepository.findByNombreContainingIgnoreCase(nombre)
                 .orElseThrow(()-> new PersonajeNotFoundException("NO SE ENCONTRO PERSONAJE CON EL NOMBRE INDICADO"));
         return personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personajeEncontrado);
     }

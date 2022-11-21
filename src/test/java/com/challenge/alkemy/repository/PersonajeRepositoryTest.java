@@ -1,78 +1,83 @@
 package com.challenge.alkemy.repository;
 
 import com.challenge.alkemy.entity.Personaje;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@DataJpaTest
 class PersonajeRepositoryTest {
 
     @Autowired
     private PersonajeRepository personajeRepository;
 
-
-    // Builders de personajes ficticios.
-    Personaje personajeFicticio = Personaje.builder()
-            .nombre("Carjulio")
-            .edad(30)
-            .historia("Fue picado por una araña y se convirtio en superHeroe")
-            .imagen("https://upload.wikimedia.org/wikipedia/commons/9/90/Spiderman.JPG")
-            .peso(97.8)
+    Personaje personaje1 = Personaje.builder()
+            .nombre("Antonio Banderas")
+            .edad(45)
+            .historia("Nacido en Málaga")
+            .imagen("https://AntonioBanderas.jpg")
+            .peso(70.20)
             .build();
 
-    Personaje personajeFicticio2 = Personaje.builder()
+    Personaje personaje2 = Personaje.builder()
             .nombre("Roman Riquelme")
-            .edad(30)
-            .historia("Fue picado por una araña y se convirtio en superHeroe")
-            .imagen("https://upload.wikimedia.org/wikipedia/commons/9/90/Spiderman.JPG")
+            .edad(45)
+            .historia("Ex jugador de Boca Juniors")
+            .imagen("https://RomanRiquelme.jpg")
             .peso(89.9)
             .build();
 
-    // Despues de correr cada test, eliminamos toda la data, asi el proximo se ejecuta con la DB limpia.
+    @BeforeEach
+    void setUp() {
+        generatePersonajes();
+    }
+
     @AfterEach
     void tearDown() {
         personajeRepository.deleteAll();
     }
 
+    @Test
+    void findByNombreIgnoreCase() {
 
-    @DisplayName("Verificar si un Personaje puede ser guardado")
-    public void checkIfPersonaCanBeSaved() {
-        Personaje savedPersonaje = personajeRepository.save(personajeFicticio);
-        Assertions.assertEquals(personajeFicticio, savedPersonaje);
+        Optional<Personaje> expected = personajeRepository.findByNombreContainingIgnoreCase("AnToNiO BanDEraS");
+        assertThat(expected).isPresent();
+        assertThat(expected).isNotEmpty();
+        assertThat(expected.get().getEdad()).isEqualTo(personaje1.getEdad());
+        assertThat(expected.get().getPeso()).isEqualTo(personaje1.getPeso());
+        assertThat(expected.get().getHistoria()).isEqualTo(personaje1.getHistoria());
     }
 
 
-    @DisplayName("Buscar Personaje por nombre")
-    void findByNombre() {
-
-        //Personaje personajeGuardadoEnDB = personajeRepository.save(personajeFicticio);
-        //Personaje personajeDB = personajeRepository.findByNombre(personajeFicticio.getNombre());
-
-        //Assertions.assertEquals(personajeGuardadoEnDB.getPersonajeId(), personajeDB.getPersonajeId());
-    }
-
-
-    @DisplayName("Buscar Personaje por edad")
+    @Test
     void findByEdad() {
-        personajeRepository.save(personajeFicticio);
-        //List<Personaje> personajesDB = personajeRepository.findByEdad(personajeFicticio.getEdad());
 
-        //Assertions.assertEquals(30, personajesDB.get(0).getEdad());
+        Optional<List<Personaje>> expected = personajeRepository.findByEdad(45);
+        assertThat(expected).isPresent();
+        assertThat(expected).isNotEmpty();
+        assertThat(expected.get()).contains(personaje2);
     }
 
 
-    @DisplayName("Buscar Personaje por peso")
+    @Test
     void findByPeso() {
-        personajeRepository.save(personajeFicticio2);
-        //List<Personaje> personajesDB = personajeRepository.findByPeso(personajeFicticio2.getPeso());
 
-        //Assertions.assertEquals(89.9, personajesDB.get(0).getPeso());
+        Optional<List<Personaje>> expected = personajeRepository.findByPeso(89.9);
+        assertThat(expected).isPresent();
+        assertThat(expected).isNotEmpty();
+        assertThat(expected.get()).contains(personaje2);
+    }
+
+    private void generatePersonajes() {
+
+        List<Personaje> personajes = List.of(personaje1, personaje2);
+        personajes.forEach(personaje -> personajeRepository.save(personaje));
     }
 }

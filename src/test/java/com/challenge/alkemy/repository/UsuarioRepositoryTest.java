@@ -5,29 +5,44 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest
 class UsuarioRepositoryTest {
+
+    private final String USUARIO = "TestingUser";
+    private final String EMAIL = "testinguser@hotmail.com";
+    private final String PASSWORD = "TestingUserPass";
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // Creamos un usuario ficticio.
     Usuario usuarioFicticio = Usuario.builder()
-            .username("TestingUser")
-            .email("lucas.arranz@hotmail.com")
-            .password("TestingUser")
+            .username(USUARIO)
+            .email(EMAIL)
+            .password(PASSWORD)
             .build();
+
+    @BeforeEach
+    void setUp() {
+        usuarioRepository.save(usuarioFicticio);
+    }
 
     @AfterEach
     void tearDown() {
         usuarioRepository.deleteAll();
     }
 
-
-    @DisplayName("Verificar si podemos buscar un Usuario por nombre")
+    @Test
     void findUsuarioByUsername() {
 
-        usuarioRepository.save(usuarioFicticio);
-        Assertions.assertEquals(usuarioFicticio, usuarioRepository.findByUsername("TestingUser").get());
+        Optional<Usuario> expected = usuarioRepository.findByUsername(USUARIO);
+        assertThat(expected).isPresent();
+        assertThat(expected).isNotEmpty();
+        assertThat(expected.get().getUsername()).isEqualTo(USUARIO);
+        assertThat(expected.get().getPassword()).isEqualTo(PASSWORD);
+        assertThat(expected.get().getEmail()).isEqualTo(EMAIL);
     }
 }
