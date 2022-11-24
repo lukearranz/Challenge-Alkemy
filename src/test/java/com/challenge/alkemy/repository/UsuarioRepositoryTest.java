@@ -25,11 +25,6 @@ class UsuarioRepositoryTest {
             .password(PASSWORD)
             .build();
 
-    @BeforeEach
-    void setUp() {
-        usuarioRepository.save(usuarioFicticio);
-    }
-
     @AfterEach
     void tearDown() {
         usuarioRepository.deleteAll();
@@ -38,11 +33,20 @@ class UsuarioRepositoryTest {
     @Test
     void findUsuarioByUsername() {
 
+        usuarioRepository.save(usuarioFicticio);
         Optional<Usuario> expected = usuarioRepository.findByUsername(USUARIO);
         assertThat(expected).isPresent();
         assertThat(expected).isNotEmpty();
         assertThat(expected.get().getUsername()).isEqualTo(USUARIO);
         assertThat(expected.get().getPassword()).isEqualTo(PASSWORD);
         assertThat(expected.get().getEmail()).isEqualTo(EMAIL);
+    }
+
+    @Test
+    void usuarioByUsernameNotFound() {
+
+        Optional<Usuario> expected = usuarioRepository.findByUsername(USUARIO);
+        assertThat(expected).isEmpty();
+        assertThat(expected).isNotPresent();
     }
 }
