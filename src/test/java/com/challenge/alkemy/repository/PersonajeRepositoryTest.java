@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.ARRAY;
 
 @DataJpaTest
 class PersonajeRepositoryTest {
@@ -34,11 +36,6 @@ class PersonajeRepositoryTest {
             .peso(89.9)
             .build();
 
-    @BeforeEach
-    void setUp() {
-        generatePersonajes();
-    }
-
     @AfterEach
     void tearDown() {
         personajeRepository.deleteAll();
@@ -47,6 +44,7 @@ class PersonajeRepositoryTest {
     @Test
     void findByNombreIgnoreCase() {
 
+        generatePersonajes();
         Optional<Personaje> expected = personajeRepository.findByNombreContainingIgnoreCase("AnToNiO BanDEraS");
         assertThat(expected).isPresent();
         assertThat(expected).isNotEmpty();
@@ -55,24 +53,46 @@ class PersonajeRepositoryTest {
         assertThat(expected.get().getHistoria()).isEqualTo(personaje1.getHistoria());
     }
 
+    @Test
+    void findByNombreIgnoreCaseNotPresent() {
+
+        Optional<Personaje> expected = personajeRepository.findByNombreContainingIgnoreCase("AnToNiO BanDEraS");
+        assertThat(expected).isEmpty();
+        assertThat(expected).isNotPresent();
+    }
 
     @Test
     void findByEdad() {
 
+        generatePersonajes();
         Optional<List<Personaje>> expected = personajeRepository.findByEdad(45);
         assertThat(expected).isPresent();
         assertThat(expected).isNotEmpty();
         assertThat(expected.get()).contains(personaje2);
     }
 
+    @Test
+    void findByEdadNotPresent() {
+
+        Optional<List<Personaje>> expected = personajeRepository.findByEdad(9999);
+        assertThat(expected.get()).isEmpty();
+    }
 
     @Test
     void findByPeso() {
 
+        generatePersonajes();
         Optional<List<Personaje>> expected = personajeRepository.findByPeso(89.9);
         assertThat(expected).isPresent();
         assertThat(expected).isNotEmpty();
         assertThat(expected.get()).contains(personaje2);
+    }
+
+    @Test
+    void findByPesoNotFound() {
+
+        Optional<List<Personaje>> expected = personajeRepository.findByPeso(999.9);
+        assertThat(expected.get()).isEmpty();
     }
 
     private void generatePersonajes() {

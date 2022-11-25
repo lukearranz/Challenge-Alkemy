@@ -27,7 +27,7 @@ class PeliculaRepositoryTest {
     private final String TITULO1 = "WoLF OF waLLStreet";
     private final String IMAGEN1 = "http://google.com/fotosdegatitos.jpg";
     private final String TITULO2 = "eL sEñoR de Los AnilLos";
-    private final String IMAGEN2 = "http://google.com/fotosdegatitos.jpg";
+    private final String IMAGEN2 = "http://google.com/asdasdasd.jpg";
 
     @AfterEach
     void tearDown() {
@@ -46,6 +46,14 @@ class PeliculaRepositoryTest {
         assertThat(expected).isPresent();
         assertThat(expected.get().getTitulo()).isEqualTo(TITULO1);
         assertThat(expected.get().getImagen()).isEqualTo(IMAGEN1);
+    }
+
+    @Test
+    void findByTituloNotFound() {
+
+        Optional<Pelicula> expected = peliculaRepository.findByTituloContainingIgnoreCase(TITULO1);
+        assertThat(expected).isNotPresent();
+        assertThat(expected).isEmpty();
     }
 
     @Test
