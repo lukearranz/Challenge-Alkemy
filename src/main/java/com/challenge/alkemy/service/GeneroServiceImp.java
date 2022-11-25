@@ -58,7 +58,7 @@ public class GeneroServiceImp implements GeneroService {
     @Override
     public void deleteGeneroById(Long generoId) throws GeneroNotFoundException {
 
-        generoRepository.findById(generoId).orElseThrow(()-> new GeneroNotFoundException("NO SE ENCONTRO GENERO A ELIMINAR CON ESE ID"));
-        generoRepository.deleteById(generoId);
+        Genero generoToDelete = generoRepository.findById(generoId).orElseThrow(() -> new GeneroNotFoundException("NO SE ENCONTRO GENERO A ELIMINAR CON ESE ID"));
+        generoRepository.delete(generoToDelete);
     }
 }
