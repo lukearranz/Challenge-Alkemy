@@ -43,7 +43,6 @@ public class PersonajeServiceImp implements PersonajeService {
                 .edad(personajeRequest.getEdad())
                 .peso(personajeRequest.getPeso())
                 .historia(personajeRequest.getHistoria())
-                // Iniciamos las peliculas como un Array vacio, para evitar el 'null'
                 .peliculas(new ArrayList<>())
                 .build();
         return personajeMapper.personajeToPersonajeConDetalleResponseDto(personajeRepository.save(personajeToSave));

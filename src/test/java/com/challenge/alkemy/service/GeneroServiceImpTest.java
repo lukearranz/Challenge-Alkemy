@@ -58,7 +58,7 @@ class GeneroServiceImpTest {
     }
 
     @Test
-    void canGetAllGenerosThenReturnEmptyList() {
+    void canGetAllGenerosShoudReturnEmptyList() {
 
         // Given
         when(generoRepository.findAll()).thenReturn(Collections.emptyList());
@@ -87,6 +87,9 @@ class GeneroServiceImpTest {
 
         // Aqui realizamos el test
         CreateGeneroResponseDto response = generoServiceImp.saveGenero(request);
+
+        // Then
+        verify(generoRepository, times(1)).save(any());
 
         assertThat(response).isNotNull();
         assertThat(response.getId()).isEqualTo(1);
