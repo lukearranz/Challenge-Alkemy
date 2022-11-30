@@ -6,7 +6,6 @@ import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.entity.dto.peliculaDto.PeliculaMapper;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaConDetalleResponseDto;
 import com.challenge.alkemy.repository.PeliculaRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,13 +19,11 @@ import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PeliculaServiceImpTest {
 
-    private final String TITULO = "Spider Man";
     private final String IMAGEN = "https://imagendeprueba.com.ar";
 
     @Mock
@@ -113,15 +110,27 @@ class PeliculaServiceImpTest {
     }
 
     private Pelicula buildPelicula() {
-        return Pelicula.builder()
+        Pelicula pelicula1 = Pelicula.builder()
                 .peliculaId(1L)
-                .titulo(TITULO)
+                .titulo("Ace Ventura")
                 .imagen(IMAGEN)
                 .calificacion(5)
                 .fechaEstreno(Date.from(Instant.now()))
                 .personajes(List.of(buildPersonaje()))
                 .genero(buildGenero())
                 .build();
+
+        Pelicula pelicula2 = Pelicula.builder()
+                .peliculaId(1L)
+                .titulo("Westword")
+                .imagen(IMAGEN)
+                .calificacion(5)
+                .fechaEstreno(Date.from(Instant.now()))
+                .personajes(List.of(buildPersonaje()))
+                .genero(buildGenero())
+                .build();
+        return null;
+        // ToDo
     }
 
     private Genero buildGenero() {
