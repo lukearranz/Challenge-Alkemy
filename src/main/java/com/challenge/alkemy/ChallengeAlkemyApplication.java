@@ -1,8 +1,10 @@
 package com.challenge.alkemy;
 
+import com.challenge.alkemy.entity.dto.authDto.request.RegisterRequestDto;
+import com.challenge.alkemy.security.service.UserServiceImp;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
-
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +27,17 @@ public class ChallengeAlkemyApplication {
 		return NoOpPasswordEncoder.getInstance();
 	}
 
-
+	@Bean
+	CommandLineRunner runner(UserServiceImp userServiceImp) {
+		// Creamos un Usuario al iniciar la aplicacion.
+		return args -> {
+			RegisterRequestDto user = RegisterRequestDto.builder()
+					.username("username")
+					.password("password")
+					.email("usuario@gmail.com")
+					.build();
+			userServiceImp.createUser(user);
+		};
+	}
 
 }
