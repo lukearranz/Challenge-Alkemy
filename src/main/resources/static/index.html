@@ -1,2 +1,118 @@
-<h1> Welcome! </h1>
-<h3>/swagger-ui/index.html#/  -----> For documentation</h3>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Peliculas ApiRest Java+Spring</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+  height: 100%;
+  color: #777;
+  line-height: 1.8;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1, .bgimg-2, .bgimg-3 {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1600px) {
+  .bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: scroll;
+    min-height: 400px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+    <div class="w3-bar" id="myNavbar">
+        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+            <i class="fa fa-bars"></i>
+        </a>
+        <a href="#home" class="w3-bar-item w3-button"> INICIO </a>
+        <a href="#proyecto" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> SOBRE EL PROYECTO </a>
+        <a href="#tecnologias" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> TECNOLOGÍAS </a>
+        <a href="https://www.lucasarranz.com.ar" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACTO </a>
+    </div>
+
+    <!-- Navbar on small screens -->
+    <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium">
+        <a href="#proyecto" class="w3-bar-item w3-button" onclick="toggleFunction()">SOBRE EL PROYECTO</a>
+        <a href="#tecnologias" class="w3-bar-item w3-button" onclick="toggleFunction()">TECNOLOGÍAS</a>
+        <a href="https://www.lucasarranz.com.ar" class="w3-bar-item w3-button" onclick="toggleFunction()">CONTACTO</a>
+    </div>
+</div>
+
+<!-- First Parallax Image with Logo Text -->
+<div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
+    <div class="w3-display-middle" style="white-space:nowrap;">
+        <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">PELICULAS <span class="w3-hide-small">API</span> REST</span>
+    </div>
+</div>
+
+<!-- Container (About Section) -->
+<div class="w3-content w3-container w3-padding-64" id="proyecto">
+    <h3 class="w3-center">SOBRE EL PROYECTO</h3>
+    <p class="w3-center"><em>Desarrollado por: Lucas Arranz García</em></p>
+    <p>
+        Proyecto realizado con el fin de practicar y aprender nuevas tecnologias, aplicando buenas practicas y cleanCode.
+        <br>
+        Esta Api nos permite listar, agregar, editar y eliminar peliculas de nuestra base de datos, junto con sus respectivos personajes y generos.
+        <br>
+        Para acceder a la documentacíon realizada en Swagger:    /swagger-ui/index.html#/
+        <br>
+        Intellij como IDE - Postman
+    </p>
+    <p class="w3-large w3-center w3-padding-16" id="tecnologias">Tecnologías utilizadas:</p>
+    <p class="w3-wide w3-center">Java 11</p>
+    <p class="w3-wide w3-center">SpringBoot 2.7.3</p>
+    <p class="w3-wide w3-center">SpringSecurity + JWT</p>
+    <p class="w3-wide w3-center">Lombok + Patrón Builder</p>
+    <p class="w3-wide w3-center">Spring Data JPA</p>
+    <p class="w3-wide w3-center">Hibernate ORM</p>
+    <p class="w3-wide w3-center">Maven</p>
+    <p class="w3-wide w3-center">H2 Database</p>
+    <p class="w3-wide w3-center">JUnit & Mockito</p>
+</div>
+
+<script>
+
+
+// Change style of navbar on scroll
+window.onscroll = function() {myFunction()};
+function myFunction() {
+    var navbar = document.getElementById("myNavbar");
+    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        navbar.className = "w3-bar" + " w3-card" + " w3-animate-top" + " w3-white";
+    } else {
+        navbar.className = navbar.className.replace(" w3-card w3-animate-top w3-white", "");
+    }
+}
+
+// Used to toggle the menu on small screens when clicking on the menu button
+function toggleFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+
+</body>
+</html>

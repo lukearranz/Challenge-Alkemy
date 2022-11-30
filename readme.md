@@ -1,4 +1,4 @@
-# ✨ Alkemy Challenge - RestApi ✨
+# ✨ Peliculas Challenge - RestApi ✨
 
 Api Rest for practice purposes
 
@@ -24,10 +24,10 @@ mvn clean install
 ```java
 
 // Api documentation
-www.localhost:8080/swagger-ui.html
+www.localhost:8080/swagger-ui/index.html#/
         
 // Default Users:
-User:   ADMINISTRADOR - ADMINISTRADOR
+User:   username - password
 ```
 
 ## Author
