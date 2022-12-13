@@ -2,19 +2,16 @@ package com.challenge.alkemy.repository;
 
 import com.challenge.alkemy.entity.Personaje;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.ARRAY;
 
-@DataJpaTest
+@SpringBootTest
 class PersonajeRepositoryTest {
 
     @Autowired
@@ -46,8 +43,7 @@ class PersonajeRepositoryTest {
 
         generatePersonajes();
         Optional<Personaje> expected = personajeRepository.findByNombreContainingIgnoreCase("AnToNiO BanDEraS");
-        assertThat(expected).isPresent();
-        assertThat(expected).isNotEmpty();
+        assertThat(expected).isPresent().isNotEmpty();
         assertThat(expected.get().getEdad()).isEqualTo(personaje1.getEdad());
         assertThat(expected.get().getPeso()).isEqualTo(personaje1.getPeso());
         assertThat(expected.get().getHistoria()).isEqualTo(personaje1.getHistoria());
@@ -57,8 +53,7 @@ class PersonajeRepositoryTest {
     void findByNombreIgnoreCaseNotPresent() {
 
         Optional<Personaje> expected = personajeRepository.findByNombreContainingIgnoreCase("AnToNiO BanDEraS");
-        assertThat(expected).isEmpty();
-        assertThat(expected).isNotPresent();
+        assertThat(expected).isEmpty().isNotPresent();
     }
 
     @Test
@@ -66,9 +61,11 @@ class PersonajeRepositoryTest {
 
         generatePersonajes();
         Optional<List<Personaje>> expected = personajeRepository.findByEdad(45);
-        assertThat(expected).isPresent();
-        assertThat(expected).isNotEmpty();
-        assertThat(expected.get()).contains(personaje2);
+        assertThat(expected).isPresent().isNotEmpty();
+        assertThat(expected.get().get(0).getEdad()).isEqualTo(personaje1.getEdad());
+        assertThat(expected.get().get(0).getNombre()).isEqualTo(personaje1.getNombre());
+        assertThat(expected.get().get(1).getEdad()).isEqualTo(personaje2.getEdad());
+        assertThat(expected.get().get(1).getNombre()).isEqualTo(personaje2.getNombre());
     }
 
     @Test
@@ -83,9 +80,9 @@ class PersonajeRepositoryTest {
 
         generatePersonajes();
         Optional<List<Personaje>> expected = personajeRepository.findByPeso(89.9);
-        assertThat(expected).isPresent();
-        assertThat(expected).isNotEmpty();
-        assertThat(expected.get()).contains(personaje2);
+        assertThat(expected).isPresent().isNotEmpty();
+        assertThat(expected.get().get(0).getPeso()).isEqualTo(personaje2.getPeso());
+        assertThat(expected.get().get(0).getNombre()).isEqualTo(personaje2.getNombre());
     }
 
     @Test
