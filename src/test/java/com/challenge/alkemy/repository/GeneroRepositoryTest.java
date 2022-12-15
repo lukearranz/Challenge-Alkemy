@@ -28,8 +28,7 @@ class GeneroRepositoryTest {
 
         generoRepository.save(genereteGenero());
         Optional<Genero> expected = generoRepository.findGeneroByNombreContainingIgnoreCase(NOMBRE).stream().findFirst();
-        assertThat(expected).isNotEmpty();
-        assertThat(expected).isPresent();
+        assertThat(expected).isNotEmpty().isPresent();
         assertThat(expected.get().getNombre()).isEqualTo(NOMBRE);
         assertThat(expected.get().getImagen()).isEqualTo(IMAGEN);
     }
@@ -38,8 +37,7 @@ class GeneroRepositoryTest {
     void findByNonExistingGenero() {
 
         Optional<Genero> expected = generoRepository.findGeneroByNombreContainingIgnoreCase(GENERO_ERRONEO);
-        assertThat(expected).isEmpty();
-        assertThat(expected).isNotPresent();
+        assertThat(expected).isEmpty().isNotPresent();
     }
 
     @Test
@@ -47,8 +45,7 @@ class GeneroRepositoryTest {
 
         Genero savedGenero = generoRepository.save(genereteGenero());
         Optional<Genero> expected = generoRepository.findById(savedGenero.getGeneroId());
-        assertThat(expected).isPresent();
-        assertThat(expected).isNotEmpty();
+        assertThat(expected).isPresent().isNotEmpty();
         assertThat(expected.get().getGeneroId()).isEqualTo(savedGenero.getGeneroId());
     }
 

@@ -35,8 +35,7 @@ class UsuarioRepositoryTest {
 
         usuarioRepository.save(usuarioFicticio);
         Optional<Usuario> expected = usuarioRepository.findByUsername(USUARIO);
-        assertThat(expected).isPresent();
-        assertThat(expected).isNotEmpty();
+        assertThat(expected).isPresent().isNotEmpty();
         assertThat(expected.get().getUsername()).isEqualTo(USUARIO);
         assertThat(expected.get().getPassword()).isEqualTo(PASSWORD);
         assertThat(expected.get().getEmail()).isEqualTo(EMAIL);
@@ -46,7 +45,6 @@ class UsuarioRepositoryTest {
     void usuarioByUsernameNotFound() {
 
         Optional<Usuario> expected = usuarioRepository.findByUsername(USUARIO);
-        assertThat(expected).isEmpty();
-        assertThat(expected).isNotPresent();
+        assertThat(expected).isEmpty().isNotPresent();
     }
 }

@@ -35,6 +35,7 @@ class PeliculaServiceImpTest {
 
     @Mock
     private PeliculaRepository peliculaRepository;
+
     @Mock
     private GeneroRepository generoRepository;
 
@@ -177,7 +178,9 @@ class PeliculaServiceImpTest {
     }
 
     @Test
-    void deletePeliculaById() {
+    void canDeletePeliculaById() {
+
+
     }
 
     @Test
@@ -236,7 +239,7 @@ class PeliculaServiceImpTest {
         return Genero.builder()
                 .generoId(1L)
                 .nombre("Terror")
-                .imagen("imagenDePrueba.jpg")
+                .imagen(IMAGEN)
                 .peliculas(Collections.emptyList())
                 .build();
     }
@@ -245,7 +248,7 @@ class PeliculaServiceImpTest {
         return Personaje.builder()
                 .personajeId(1L)
                 .nombre("PersonajeDePrueba")
-                .imagen("Imagen de prueba")
+                .imagen(IMAGEN)
                 .historia("Historia de prueba sobre este personaje")
                 .peso(35.6)
                 .edad(23)

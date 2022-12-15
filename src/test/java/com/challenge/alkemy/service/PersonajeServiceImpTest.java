@@ -23,6 +23,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -95,15 +96,17 @@ class PersonajeServiceImpTest {
         // Then
         verify(personajeRepository, times(1)).save(any());
 
-        assertThat(response).isEqualTo(personajeMapper.personajeToPersonajeConDetalleResponseDto(buildPersonaje()));
-        assertThat(response).isNotNull();
-        assertThat(response.getNombre()).isEqualTo(NOMBRE);
-        assertThat(response.getEdad()).isEqualTo(EDAD);
-        assertThat(response.getPeso()).isEqualTo(PESO);
-        assertThat(response.getImagen()).isEqualTo(IMAGEN);
-        assertThat(response.getHistoria()).isEqualTo(HISTORIA);
-        assertThat(response.getPeliculas()).isEqualTo(Collections.emptyList());
-        assertThat(response.getId()).isEqualTo(1L);
+        assertAll(
+                () -> assertThat(response).isEqualTo(personajeMapper.personajeToPersonajeConDetalleResponseDto(buildPersonaje())),
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.getNombre()).isEqualTo(NOMBRE),
+                () -> assertThat(response.getEdad()).isEqualTo(EDAD),
+                () -> assertThat(response.getPeso()).isEqualTo(PESO),
+                () -> assertThat(response.getImagen()).isEqualTo(IMAGEN),
+                () -> assertThat(response.getHistoria()).isEqualTo(HISTORIA),
+                () -> assertThat(response.getPeliculas()).isEqualTo(Collections.emptyList()),
+                () -> assertThat(response.getId()).isEqualTo(1L)
+        );
     }
 
     @Test
@@ -137,16 +140,18 @@ class PersonajeServiceImpTest {
         // Then
         verify(personajeRepository, times(1)).findById(id);
 
-        assertThat(response).isNotNull();
-        assertThat(response).isEqualTo(personajeMapper.personajeToPersonajeConDetalleResponseDto(personaje));
-        assertThat(response).isNotNull();
-        assertThat(response.getNombre()).isEqualTo(NOMBRE);
-        assertThat(response.getEdad()).isEqualTo(EDAD);
-        assertThat(response.getPeso()).isEqualTo(PESO);
-        assertThat(response.getImagen()).isEqualTo(IMAGEN);
-        assertThat(response.getHistoria()).isEqualTo(HISTORIA);
-        assertThat(response.getPeliculas()).isEqualTo(Collections.emptyList());
-        assertThat(response.getId()).isEqualTo(1L);
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response).isEqualTo(personajeMapper.personajeToPersonajeConDetalleResponseDto(personaje)),
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.getNombre()).isEqualTo(NOMBRE),
+                () -> assertThat(response.getEdad()).isEqualTo(EDAD),
+                () -> assertThat(response.getPeso()).isEqualTo(PESO),
+                () -> assertThat(response.getImagen()).isEqualTo(IMAGEN),
+                () -> assertThat(response.getHistoria()).isEqualTo(HISTORIA),
+                () -> assertThat(response.getPeliculas()).isEqualTo(Collections.emptyList()),
+                () -> assertThat(response.getId()).isEqualTo(1L)
+        );
     }
 
     @Test
@@ -165,7 +170,6 @@ class PersonajeServiceImpTest {
     @Test
     void canDeletePersonajeById() throws PersonajeNotFoundException {
 
-        Long id = 1L;
         Personaje personaje = buildPersonaje();
 
         // Given
@@ -197,18 +201,17 @@ class PersonajeServiceImpTest {
 
         // When
         PersonajeConDetalleResponseDto response = personajeServiceImp.updatePersonaje(id, personajeToUpdate);
-        System.out.println(personajeToUpdate);
-        System.out.println(personaje);
-        System.out.println(response);
 
         // Then
         verify(personajeRepository, times(1)).findById(id);
         verify(personajeRepository, times(1)).save(personaje);
 
-        assertThat(response).isEqualTo(personajeMapper.personajeToPersonajeConDetalleResponseDto(personaje));
-        assertThat(response.getHistoria()).isEqualTo(personaje.getHistoria());
-        assertThat(response.getPeso()).isEqualTo(personaje.getPeso());
-        assertThat(response).isNotNull();
+        assertAll(
+                () -> assertThat(response).isEqualTo(personajeMapper.personajeToPersonajeConDetalleResponseDto(personaje)),
+                () -> assertThat(response.getHistoria()).isEqualTo(personaje.getHistoria()),
+                () -> assertThat(response.getPeso()).isEqualTo(personaje.getPeso()),
+                () -> assertThat(response).isNotNull()
+        );
     }
 
     @Test
@@ -222,7 +225,6 @@ class PersonajeServiceImpTest {
                 .isThrownBy(() -> personajeServiceImp.getPersonajeById(id));
 
         verify(personajeRepository, times(1)).findById(id);
-
     }
 
     @Test
@@ -237,8 +239,10 @@ class PersonajeServiceImpTest {
         // Then
         verify(personajeRepository, times(1)).findAll();
 
-        assertThat(response).isNotNull();
-        assertThat(response.isEmpty()).isFalse();
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.isEmpty()).isFalse()
+        );
     }
 
     @Test
@@ -253,8 +257,10 @@ class PersonajeServiceImpTest {
         // Then
         verify(peliculaRepository, times(1)).findById(anyLong());
 
-        assertThat(response.get(0).getNombre()).isEqualTo(buildPersonaje().getNombre());
-        assertThat(response.get(0).getImagen()).isEqualTo(buildPersonaje().getImagen());
+        assertAll(
+                () -> assertThat(response.get(0).getNombre()).isEqualTo(buildPersonaje().getNombre()),
+                () -> assertThat(response.get(0).getImagen()).isEqualTo(buildPersonaje().getImagen())
+        );
     }
 
     @Test
@@ -282,10 +288,12 @@ class PersonajeServiceImpTest {
         PersonajeBuscadoPorParametroResponseDto response = personajeServiceImp.getPersonajeByNombre(anyString());
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response).isEqualTo(personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personaje));
-        assertThat(response.getNombre()).isEqualTo(personaje.getNombre());
-        assertThat(response.getImagen()).isEqualTo(personaje.getImagen());
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response).isEqualTo(personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personaje)),
+                () -> assertThat(response.getNombre()).isEqualTo(personaje.getNombre()),
+                () -> assertThat(response.getImagen()).isEqualTo(personaje.getImagen())
+        );
         verify(personajeRepository, times(1)).findByNombreContainingIgnoreCase(anyString());
     }
 
@@ -313,9 +321,11 @@ class PersonajeServiceImpTest {
         List<PersonajeBuscadoPorParametroResponseDto> response = personajeServiceImp.getPersonajeByEdad(personaje.getEdad());
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response.get(0)).isEqualTo(personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personaje));
-        assertThat(response.isEmpty()).isFalse();
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.get(0)).isEqualTo(personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personaje)),
+                () -> assertThat(response.isEmpty()).isFalse()
+        );
     }
 
     @Test
@@ -343,10 +353,12 @@ class PersonajeServiceImpTest {
         List<PersonajeBuscadoPorParametroResponseDto> response = personajeServiceImp.getPersonajeByPeso(personaje.getPeso());
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response.isEmpty()).isFalse();
-        assertThat(response.get(0)).isEqualTo(personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personaje));
-        assertThat(response.get(0).getImagen()).isEqualTo(personaje.getImagen());
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.isEmpty()).isFalse(),
+                () -> assertThat(response.get(0)).isEqualTo(personajeMapper.personajeToPersonajeBuscadoPorParametroResponseDto(personaje)),
+                () -> assertThat(response.get(0).getImagen()).isEqualTo(personaje.getImagen())
+        );
     }
 
     @Test

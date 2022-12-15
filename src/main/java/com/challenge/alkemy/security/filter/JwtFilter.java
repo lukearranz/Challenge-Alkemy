@@ -3,7 +3,6 @@ package com.challenge.alkemy.security.filter;
 import com.challenge.alkemy.security.service.UserServiceImp;
 import com.challenge.alkemy.security.utility.JWTUtility;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,7 +33,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if (null == authorization || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
-
         }
         token = authorization.substring(7);
         userName = jwtUtility.getUsernameFromToken(token);

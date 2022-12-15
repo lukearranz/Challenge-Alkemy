@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,9 +53,11 @@ class GeneroServiceImpTest {
         // Chequeamos cuantas veces llamamos al metodo generoRepository.findAll()
         verify(generoRepository, times(1)).findAll();
 
-        assertThat(response).isNotNull();
-        assertThat(response.isEmpty()).isFalse();
-        assertThat(response.get(0).getId().equals(buildGenero().getGeneroId())).isTrue();
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.get(0)).isNotNull(),
+                () -> assertThat(response.get(0).getId()).isEqualTo(buildGenero().getGeneroId())
+        );
     }
 
     @Test
@@ -69,8 +72,7 @@ class GeneroServiceImpTest {
         // Then
         verify(generoRepository, times(1)).findAll();
 
-        assertThat(response).isNotNull();
-        assertThat(response.isEmpty()).isTrue();
+        assertThat(response).isNotNull().isEqualTo(Collections.emptyList());
     }
 
     @Test
@@ -91,10 +93,12 @@ class GeneroServiceImpTest {
         // Then
         verify(generoRepository, times(1)).save(any());
 
-        assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(1);
-        assertThat(response.getNombre()).isEqualTo(NOMBRE);
-        assertThat(response.getImagen()).isEqualTo(IMAGEN);
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.getId()).isEqualTo(1),
+                () -> assertThat(response.getNombre()).isEqualTo(NOMBRE),
+                () -> assertThat(response.getImagen()).isEqualTo(IMAGEN)
+        );
     }
 
 
@@ -126,8 +130,6 @@ class GeneroServiceImpTest {
 
         assertThatExceptionOfType(GeneroAlreadyInUseException.class)
                 .isThrownBy(() -> generoServiceImp.saveGenero(request));
-
-
     }
 
     @Test
@@ -144,11 +146,13 @@ class GeneroServiceImpTest {
         // Then
         verify(generoRepository, times(1)).findById(id);
 
-        assertThat(response).isNotNull();
-        assertThat(response).isEqualTo(generoMapper.generoToGeneroResponseDto(genero));
-        assertThat(response.getId()).isEqualTo(id);
-        assertThat(response.getNombre()).isEqualTo(NOMBRE);
-        assertThat(response.getImagen()).isEqualTo(IMAGEN);
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response).isEqualTo(generoMapper.generoToGeneroResponseDto(genero)),
+                () -> assertThat(response.getId()).isEqualTo(id),
+                () -> assertThat(response.getNombre()).isEqualTo(NOMBRE),
+                () -> assertThat(response.getImagen()).isEqualTo(IMAGEN)
+        );
     }
 
     @Test
@@ -221,15 +225,4 @@ class GeneroServiceImpTest {
                 .peliculasId(Collections.emptyList())
                 .build();
     }
-
-    private CreateGeneroResponseDto buildCreateGeneroResponseDto() {
-        return CreateGeneroResponseDto.builder()
-                .id(1L)
-                .nombre(NOMBRE)
-                .imagen(IMAGEN)
-                .build();
-    }
-
-
-
 }
