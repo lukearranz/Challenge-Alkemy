@@ -276,15 +276,63 @@ class PeliculaServiceImpTest {
     }
 
     @Test
-    void getPeliculaById() {
+    void canGetPeliculaById() throws PeliculaNotFoundException {
+
+        Pelicula pelicula = buildPelicula().get(0);
+
+        // Given
+        when(peliculaRepository.findById(anyLong())).thenReturn(Optional.of(pelicula));
+
+        // When
+        PeliculaConDetalleResponseDto repsonse = peliculaServiceImp.getPeliculaById(1L);
+
+        // Then
+        verify(peliculaRepository, times(1)).findById(anyLong());
+        assertThat(repsonse).isNotNull();
+        assertThat(repsonse).isEqualTo(peliculaMapper.peliculaToDetallePeliculaResponseDto(pelicula));
+    }
+
+    @Test
+    void getPeliculaByIdNotFoundShouldThrowException() {
+
+        when(peliculaRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(PeliculaNotFoundException.class)
+                .isThrownBy(() -> peliculaServiceImp.getPeliculaById(anyLong()));
     }
 
     @Test
     void getPeliculasSinParametros() {
+        List<Pelicula> peliculas = buildPelicula();
+
+        when(peliculaRepository.findAll()).thenReturn(peliculas);
+
+        List<PeliculaBuscadaPorParametroResponseDto> response = peliculaServiceImp.getPeliculasSinParametros();
+
+        verify(peliculaRepository, times(1)).findAll();
+        assertThat(response).isEqualTo(peliculaMapper.peliculaToPeliculaBuscadaPorParametroResponseDto(peliculas));
+        assertThat(response).isNotNull();
     }
 
     @Test
-    void getPeliculaByTitulo() {
+    void canGetPeliculaByTitulo() throws PeliculaNotFoundException {
+
+        Pelicula pelicula = buildPelicula().get(0);
+        when(peliculaRepository.findByTituloContainingIgnoreCase(anyString())).thenReturn(Optional.of(pelicula));
+
+        PeliculaBuscadaPorParametroResponseDto response = peliculaServiceImp.getPeliculaByTitulo("Ace Ventura");
+
+        assertThat(response).isEqualTo(peliculaMapper.peliculaToPeliculaBuscadaPorTituloDtoResponse(pelicula));
+    }
+
+    @Test
+    void getPeliculaByTituloShouldThrowException() {
+
+        when(peliculaRepository.findByTituloContainingIgnoreCase(anyString())).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(PeliculaNotFoundException.class)
+                .isThrownBy(() -> peliculaServiceImp.getPeliculaByTitulo(anyString()));
+
     }
 
     private List<Pelicula> buildPelicula() {
