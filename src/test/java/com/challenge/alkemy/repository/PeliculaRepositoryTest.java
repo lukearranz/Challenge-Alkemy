@@ -17,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class PeliculaRepositoryTest {
 
+
+    // ToDo mock dependencies
     @Autowired
     PeliculaRepository peliculaRepository;
     @Autowired
@@ -42,6 +44,9 @@ class PeliculaRepositoryTest {
         peliculaRepository.save(generatePelicula(TITULO1, IMAGEN1));
         peliculaRepository.save(generatePelicula(TITULO2, IMAGEN2));
         Optional<Pelicula> expected = peliculaRepository.findByTituloContainingIgnoreCase(TITULO1);
+
+
+
         assertThat(expected).isNotEmpty().isPresent();
         assertThat(expected.get().getTitulo()).isEqualTo(TITULO1);
         assertThat(expected.get().getImagen()).isEqualTo(IMAGEN1);

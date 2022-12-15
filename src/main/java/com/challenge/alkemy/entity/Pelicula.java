@@ -41,7 +41,6 @@ public class Pelicula {
     @Column(name = "CALIFICACION")
     private int calificacion;
 
-    @ManyToMany
     @JoinTable(
             name = "PERSONAJES_PELICULAS",
             joinColumns = @JoinColumn(

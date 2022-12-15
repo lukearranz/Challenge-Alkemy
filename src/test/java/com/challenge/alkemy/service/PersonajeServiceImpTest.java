@@ -194,7 +194,6 @@ class PersonajeServiceImpTest {
         personaje.setHistoria("Historia editada");
         personajeToUpdate.setHistoria("Historia editada");
 
-
         // Given
         when(personajeRepository.findById(anyLong())).thenReturn(Optional.of(personaje));
         when(personajeRepository.save(any())).thenReturn(personaje);

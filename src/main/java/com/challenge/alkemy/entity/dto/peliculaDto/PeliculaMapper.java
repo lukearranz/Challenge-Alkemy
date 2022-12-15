@@ -3,6 +3,7 @@ package com.challenge.alkemy.entity.dto.peliculaDto;
 import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.entity.dto.generoDto.response.CreateGeneroResponseDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.request.UpdatePeliculaRequestDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaConDetalleResponseDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
 import com.challenge.alkemy.entity.dto.personajeDto.response.PersonajeConDetalleResponseDto;
@@ -29,7 +30,7 @@ public class PeliculaMapper {
                 .titulo(pelicula.getTitulo())
                 .imagen(pelicula.getImagen())
                 .personajes(pelicula.getPersonajes().stream()
-                        .map(personaje -> mapPersonajeToPersonajeDto(personaje))
+                        .map(this::mapPersonajeToPersonajeDto)
                         .collect(Collectors.toList()))
                 .build();
     }
@@ -50,6 +51,17 @@ public class PeliculaMapper {
                 .fechaEstreno(pelicula.getFechaEstreno())
                 .imagen(pelicula.getImagen())
                 .build()).collect(Collectors.toList());
+    }
+
+    public UpdatePeliculaRequestDto peliculaToPeliculaRequestDto(Pelicula pelicula) {
+        return UpdatePeliculaRequestDto.builder()
+                .titulo(pelicula.getTitulo())
+                .fechaEstreno(pelicula.getFechaEstreno())
+                .imagen(pelicula.getImagen())
+                .calificacion(pelicula.getCalificacion())
+                .personajesId(List.of(pelicula.getPersonajes().get(0).getPersonajeId()))
+                .generoId(pelicula.getGenero().getGeneroId())
+                .build();
     }
 
     // Este metodo lo usamos para mapear los personajes del metodo 'peliculaToCreatePeliculaResponseDto'

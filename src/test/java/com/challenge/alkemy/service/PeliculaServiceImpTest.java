@@ -4,15 +4,20 @@ import com.challenge.alkemy.entity.Genero;
 import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.entity.dto.peliculaDto.PeliculaMapper;
+import com.challenge.alkemy.entity.dto.peliculaDto.request.UpdatePeliculaRequestDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaConDetalleResponseDto;
 import com.challenge.alkemy.error.genero.GeneroNotFoundException;
+import com.challenge.alkemy.error.pelicula.PeliculaAlreadyExistsException;
 import com.challenge.alkemy.error.pelicula.PeliculaBuscadaPorParametroIncorrectoException;
 import com.challenge.alkemy.error.pelicula.PeliculaNotFoundException;
+import com.challenge.alkemy.error.personaje.PersonajeNotFoundException;
 import com.challenge.alkemy.repository.GeneroRepository;
 import com.challenge.alkemy.repository.PeliculaRepository;
+import com.challenge.alkemy.repository.PersonajeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -38,6 +43,9 @@ class PeliculaServiceImpTest {
 
     @Mock
     private GeneroRepository generoRepository;
+
+    @Mock
+    private PersonajeRepository personajeRepository;
 
     @Spy
     private PeliculaMapper peliculaMapper;
@@ -178,17 +186,85 @@ class PeliculaServiceImpTest {
     }
 
     @Test
-    void canDeletePeliculaById() {
+    void canDeletePeliculaById() throws PeliculaNotFoundException {
 
+        List<Pelicula> peliculas = buildPelicula();
+
+        // Given
+        when(peliculaRepository.findById(anyLong())).thenReturn(peliculas.stream().findFirst());
+
+        // When
+        peliculaServiceImp.deletePeliculaById(peliculas.get(0).getPeliculaId());
+        ArgumentCaptor<Pelicula> peliculaArgumentCaptor =
+                ArgumentCaptor.forClass(Pelicula.class);
+
+        // Then
+        verify(peliculaRepository).delete(peliculaArgumentCaptor.capture());
+        assertThat(peliculaArgumentCaptor.getValue()).isEqualTo(peliculas.get(0));
+    }
+
+    @Test
+    void peliculaToDeleteNotFoundById() {
+
+        // Given
+        when(peliculaRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // Then
+        assertThatExceptionOfType(PeliculaNotFoundException.class)
+                .isThrownBy(() -> peliculaServiceImp.deletePeliculaById(1L));
 
     }
 
     @Test
-    void updatePelicula() {
+    void canUpdatePelicula() throws PersonajeNotFoundException, PeliculaNotFoundException, PeliculaAlreadyExistsException {
+
+        Pelicula pelicula = buildPelicula().get(0);
+        pelicula.setTitulo("Titulo editado");
+        Personaje personaje = buildPersonaje();
+        Genero genero = buildGenero();
+
+        // Given
+        when(peliculaRepository.findById(anyLong())).thenReturn(Optional.of(buildPelicula().get(0)));
+        when(personajeRepository.findById(anyLong())).thenReturn(Optional.ofNullable(personaje));
+        when(generoRepository.findById(anyLong())).thenReturn(Optional.ofNullable(genero));
+        when(peliculaRepository.save(any())).thenReturn(pelicula);
+
+        // When
+        PeliculaConDetalleResponseDto response = peliculaServiceImp.updatePelicula(1L, peliculaMapper.peliculaToPeliculaRequestDto(pelicula));
+
+        // Then
+        verify(peliculaRepository, times(1)).findById(1L);
+        verify(peliculaRepository, times(1)).save(any());
+        assertThat(response.getTitulo()).isEqualTo("Titulo editado");
     }
 
     @Test
-    void addPersonajeToPelicula() {
+    void updatePeliculaTituloAlreadyExistsShouldThrowException() {
+
+        Pelicula pelicula = buildPelicula().get(0);
+
+        when(peliculaRepository.findByTituloContainingIgnoreCase(anyString())).thenReturn(Optional.ofNullable(buildPelicula().get(0)));
+        assertThatExceptionOfType(PeliculaAlreadyExistsException.class)
+                .isThrownBy(() -> peliculaServiceImp.updatePelicula(1L, peliculaMapper.peliculaToPeliculaRequestDto(pelicula)));
+    }
+
+    @Test
+    void updatePeliculaPersonajeNotFoundShouldThrowException() {
+
+        Pelicula pelicula = buildPelicula().get(0);
+
+        // Given
+        when(peliculaRepository.findById(anyLong())).thenReturn(Optional.of(buildPelicula().get(0)));
+        when(personajeRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(PersonajeNotFoundException.class)
+                .isThrownBy(() -> peliculaServiceImp.updatePelicula(1L, peliculaMapper.peliculaToPeliculaRequestDto(pelicula)));
+    }
+
+    @Test
+    void canAddPersonajeToPelicula() {
+
+
     }
 
     @Test
@@ -223,7 +299,7 @@ class PeliculaServiceImpTest {
                 .build();
 
         Pelicula pelicula2 = Pelicula.builder()
-                .peliculaId(1L)
+                .peliculaId(2L)
                 .titulo("Westword")
                 .imagen(IMAGEN)
                 .calificacion(5)
