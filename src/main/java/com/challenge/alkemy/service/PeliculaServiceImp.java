@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -125,15 +126,15 @@ public class PeliculaServiceImp implements PeliculaService{
         Pelicula peliculaDB = peliculaRepository.findById(idMovie)
                 .orElseThrow(()-> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID"));
 
-        List<Personaje> personajesInMovie = peliculaDB.getPersonajes();
-        for (Personaje personaje : personajesInMovie) {
+        List<Personaje> personajesParaGuardar = new ArrayList<>(peliculaDB.getPersonajes());
+        for (Personaje personaje : personajesParaGuardar) {
             if (personaje.getPersonajeId() == idCharacter) {
                 throw new PersonajeYaEnUsoException("EL PERSONAJE QUE DESEA AGREGAR YA ESTA EN LA PELICULA");
             }
         }
 
-        personajesInMovie.add(personajeDB);
-        peliculaDB.setPersonajes(personajesInMovie);
+        personajesParaGuardar.add(personajeDB);
+        peliculaDB.setPersonajes(personajesParaGuardar);
         peliculaDB.setPeliculaId(idMovie);
 
         return peliculaMapper.peliculaToDetallePeliculaResponseDto(peliculaRepository.save(peliculaDB));
@@ -147,7 +148,7 @@ public class PeliculaServiceImp implements PeliculaService{
         Pelicula peliculaDB = peliculaRepository.findById(idMovie)
                 .orElseThrow(()-> new PeliculaNotFoundException("NO SE ENCONTRO PELICULA CON ESE ID"));
 
-        List<Personaje> personajesInMovie = peliculaDB.getPersonajes();
+        List<Personaje> personajesInMovie = new ArrayList<>(peliculaDB.getPersonajes());
 
         if (!personajesInMovie.contains(personajeToDelete)) {
             throw new PersonajeNotFoundInPeliculaException("NO SE ENCONTRO EL PERSONAJE A ELIMINAR EN ESTA PELICULA");

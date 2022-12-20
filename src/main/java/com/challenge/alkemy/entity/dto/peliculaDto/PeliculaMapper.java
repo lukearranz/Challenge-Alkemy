@@ -3,6 +3,7 @@ package com.challenge.alkemy.entity.dto.peliculaDto;
 import com.challenge.alkemy.entity.Pelicula;
 import com.challenge.alkemy.entity.Personaje;
 import com.challenge.alkemy.entity.dto.generoDto.response.CreateGeneroResponseDto;
+import com.challenge.alkemy.entity.dto.peliculaDto.request.CreatePeliculaRequestDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.request.UpdatePeliculaRequestDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaConDetalleResponseDto;
 import com.challenge.alkemy.entity.dto.peliculaDto.response.PeliculaBuscadaPorParametroResponseDto;
@@ -55,6 +56,17 @@ public class PeliculaMapper {
 
     public UpdatePeliculaRequestDto peliculaToPeliculaRequestDto(Pelicula pelicula) {
         return UpdatePeliculaRequestDto.builder()
+                .titulo(pelicula.getTitulo())
+                .fechaEstreno(pelicula.getFechaEstreno())
+                .imagen(pelicula.getImagen())
+                .calificacion(pelicula.getCalificacion())
+                .personajesId(List.of(pelicula.getPersonajes().get(0).getPersonajeId()))
+                .generoId(pelicula.getGenero().getGeneroId())
+                .build();
+    }
+
+    public CreatePeliculaRequestDto peliculaToCreatePeliculaRequestDto(Pelicula pelicula) {
+        return CreatePeliculaRequestDto.builder()
                 .titulo(pelicula.getTitulo())
                 .fechaEstreno(pelicula.getFechaEstreno())
                 .imagen(pelicula.getImagen())
