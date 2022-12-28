@@ -1,6 +1,7 @@
 package com.challenge.alkemy.entity.dto.peliculaDto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.*;
@@ -8,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@Builder
 public class UpdatePeliculaRequestDto {
     @NotBlank
     private String titulo;

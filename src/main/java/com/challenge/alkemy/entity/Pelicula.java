@@ -35,7 +35,6 @@ public class Pelicula {
     @Column(name = "FECHA_DE_ESTRENO")
     private Date fechaEstreno;
 
-
     @Min(value = 1, message = "La calificacion no puede ser menor a 1")
     @Max(value = 5, message = "La calificacion no puede ser mayor a 5")
     @Column(name = "CALIFICACION")

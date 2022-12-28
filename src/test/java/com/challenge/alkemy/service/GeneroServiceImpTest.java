@@ -173,7 +173,6 @@ class GeneroServiceImpTest {
     @Test
     void canDeleteGeneroById() throws GeneroNotFoundException {
 
-        Long id = 1L;
         Genero genero = buildGenero();
 
         // Given

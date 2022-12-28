@@ -1,12 +1,9 @@
 package com.challenge.alkemy.entity.dto.peliculaDto.request;
 
-import com.challenge.alkemy.entity.Genero;
-import com.challenge.alkemy.entity.Personaje;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.persistence.GeneratedValue;
 import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.List;
