@@ -17,6 +17,7 @@ import com.challenge.alkemy.error.personaje.PersonajeYaEnUsoException;
 import com.challenge.alkemy.repository.GeneroRepository;
 import com.challenge.alkemy.repository.PeliculaRepository;
 import com.challenge.alkemy.repository.PersonajeRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,10 +27,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -371,13 +369,16 @@ class PeliculaServiceImpTest {
         Personaje personaje = buildPersonaje();
         Genero genero = buildGenero();
         when(peliculaRepository.findByTituloContainingIgnoreCase(anyString())).thenReturn(Optional.empty());
+        when(peliculaRepository.save(any())).thenReturn(pelicula);
         when(personajeRepository.findById(anyLong())).thenReturn(Optional.of(personaje));
         when(generoRepository.findById(anyLong())).thenReturn(Optional.of(genero));
 
-        peliculaServiceImp.createPelicula(peliculaMapper.peliculaToCreatePeliculaRequestDto(pelicula));
+        CreatePeliculaRequestDto peliculaMappeadaParaGuardar = peliculaMapper.peliculaToCreatePeliculaRequestDto(pelicula);
+        peliculaServiceImp.createPelicula(peliculaMappeadaParaGuardar);
 
         verify(peliculaRepository, times(1)).findByTituloContainingIgnoreCase(anyString());
-        //verify(generoRepository, times(1)).findById(genero.getGeneroId());
+        verify(peliculaRepository, times(1)).save(any());
+        verify(generoRepository, times(1)).findById(genero.getGeneroId());
     }
 
     @Test
@@ -398,6 +399,20 @@ class PeliculaServiceImpTest {
         when(personajeRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(PersonajeNotFoundException.class)
+                .isThrownBy(() -> peliculaServiceImp.createPelicula(peliculaMapper.peliculaToCreatePeliculaRequestDto(pelicula)));
+    }
+
+    @Test
+    void createPeliculaGeneroNotFound() {
+
+        Pelicula pelicula = buildPelicula().get(0);
+        Personaje personaje = buildPersonaje();
+
+        when(peliculaRepository.findByTituloContainingIgnoreCase(anyString())).thenReturn(Optional.empty());
+        when(personajeRepository.findById(anyLong())).thenReturn(Optional.of(personaje));
+        when(generoRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(() -> peliculaServiceImp.createPelicula(peliculaMapper.peliculaToCreatePeliculaRequestDto(pelicula)));
     }
 
